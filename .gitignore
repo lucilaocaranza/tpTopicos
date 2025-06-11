@@ -1,0 +1,32 @@
+# Archivos de Code::Blocks que no son esenciales
+*.layout
+*.depend
+
+# Archivos de compilación
+*.o
+*.obj
+*.exe
+*.dll
+*.out
+*.a
+*.so
+
+# Archivos temporales y de backup
+*~
+*.swp
+*.bak
+*.tmp
+
+# Archivos de log
+*.log
+
+# Archivos del sistema operativo
+.DS_Store
+Thumbs.db
+
+# Archivos generados por depuradores
+.gdb_history
+
+# Carpetas de compilación (si usás alguna)
+build/
+bin/
