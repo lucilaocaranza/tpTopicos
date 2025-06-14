@@ -3,6 +3,7 @@
 
 #include <stdio.h>
 #include <stdlib.h>
+#include <string.h>
 #define ARG_INDICE_ICC 1
 #define ARG_INDICE_ITEMS 2
 #define TODO_OK 0
