@@ -2,10 +2,10 @@
   "configurations": [
     {
       "name": "Win32",
-      "includePath": ["${workspaceFolder}/**", "C:/MinGW/include"],
+      "includePath": ["${workspaceFolder}/**", "C:/MinGW/include", "C:/MinGW/lib/gcc/mingw32/6.3.0/include"],
       "defines": [],
       "compilerPath": "C:/MinGW/bin/gcc.exe",
-      "cStandard": "c89",
+      "cStandard": "c11",
       "intelliSenseMode": "windows-gcc-x64"
     }
   ],
