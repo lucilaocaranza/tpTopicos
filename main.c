@@ -50,6 +50,8 @@ int main(int argc, char *argv[])
         decodificar(nivel);
         guionAespacio(nivel);
         primeraMayus(nivel);
+
+        //Clasificador
         clasificador(&registros_cap[total],nivel);
 
         //estas son para el archivo Items
