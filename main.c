@@ -14,9 +14,9 @@ void reemplazarComaPorPunto(char *indice);
 void guionAespacio(char *cadena);
 void primeraMayus(char *cadena);
 void decodificar(char *cadena);
-void clasificador(RegistroICC* reg, char* campo);
-void desencriptarArchItems(char* campo);
-void quitarAnteriorAlPrimerGuion(char* cadena);
+void clasificador(RegistroICC *reg, char *campo);
+void desencriptarArchItems(char *campo);
+void quitarAnteriorAlPrimerGuion(char *cadena);
 
 int main(int argc, char *argv[])
 {
@@ -51,14 +51,8 @@ int main(int argc, char *argv[])
         guionAespacio(nivel);
         primeraMayus(nivel);
 
-        //Clasificador
-        clasificador(&registros_cap[total],nivel);
-
-        //estas son para el archivo Items
-//        desencriptarArchItems(nivel);
-//        quitarAnteriorAlPrimerGuion(nivel);
-//        guionAespacio(nivel);
-//        primeraMayus(nivel);
+        // Clasificador
+        clasificador(&registros_cap[total], nivel);
 
         // Campo indice
         reemplazarComaPorPunto(indiceStr);
@@ -88,6 +82,10 @@ int main(int argc, char *argv[])
         registros_cap[total].periodo = nuevaFecha;
 
         // Campo nivel
+        desencriptarArchItems(nivel);
+        quitarAnteriorAlPrimerGuion(nivel);
+        guionAespacio(nivel);
+        primeraMayus(nivel);
 
         // Campo indice
         reemplazarComaPorPunto(indiceStr);
@@ -175,18 +173,18 @@ void decodificar(char *cadena)
         cadena++;
     }
 }
-void clasificador(RegistroICC* reg, char* campo)
+void clasificador(RegistroICC *reg, char *campo)
 {
     if (strcmp(campo, "Nivel general") == 0)
         strcpy(reg->clasificador, "Nivel general");
     else
         strcpy(reg->clasificador, "Capitulos");
 }
-void desencriptarArchItems(char* campo)
+void desencriptarArchItems(char *campo)
 {
-    while(*campo)
+    while (*campo)
     {
-        switch(*campo)
+        switch (*campo)
         {
         case '@':
             *campo = 'a';
@@ -222,8 +220,9 @@ void desencriptarArchItems(char* campo)
         campo++;
     }
 }
-void quitarAnteriorAlPrimerGuion(char* cadena)
+void quitarAnteriorAlPrimerGuion(char *cadena)
 {
-    char* act = strchr(cadena,'_');
-    strcpy(cadena,act);
+    char *act = strchr(cadena, '_');
+    act++;
+    strcpy(cadena, act);
 }
