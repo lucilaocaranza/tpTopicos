@@ -46,8 +46,10 @@ void FechaConvertirAGuiones(char *strDestino, Fecha *origen)
   int mes = origen->mes;
   int anio = origen->anio;
 
-  *(strDestino++) = '0' + dia / 10;
-  *(strDestino++) = '0' + dia % 10;
+  *(strDestino++) = '0' + (anio / 1000) % 10;
+  *(strDestino++) = '0' + (anio / 100) % 10;
+  *(strDestino++) = '0' + (anio / 10) % 10;
+  *(strDestino++) = '0' + anio % 10;
 
   *(strDestino++) = '-';
 
@@ -56,10 +58,8 @@ void FechaConvertirAGuiones(char *strDestino, Fecha *origen)
 
   *(strDestino++) = '-';
 
-  *(strDestino++) = '0' + (anio / 1000) % 10;
-  *(strDestino++) = '0' + (anio / 100) % 10;
-  *(strDestino++) = '0' + (anio / 10) % 10;
-  *(strDestino++) = '0' + anio % 10;
+  *(strDestino++) = '0' + dia / 10;
+  *(strDestino++) = '0' + dia % 10;
 
   *strDestino = '\0';
 }
