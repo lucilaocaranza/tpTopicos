@@ -11,9 +11,13 @@
 				<Option object_output="obj/Debug/" />
 				<Option type="1" />
 				<Option compiler="gcc" />
+				<Option parameters="indices_icc_general_capitulos.csv Indices_items_obra.csv" />
 				<Compiler>
 					<Add option="-g" />
 				</Compiler>
+				<Linker>
+					<Add library="TDAFecha/bin/Debug/libTDAFecha.a" />
+				</Linker>
 			</Target>
 			<Target title="Release">
 				<Option output="bin/Release/tpTopicos" prefix_auto="1" extension_auto="1" />
@@ -34,6 +38,7 @@
 		<Unit filename="main.c">
 			<Option compilerVar="CC" />
 		</Unit>
+		<Unit filename="main.h" />
 		<Extensions>
 			<lib_finder disable_auto="1" />
 		</Extensions>

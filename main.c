@@ -30,6 +30,8 @@ int main(int argc, char *argv[])
     }
 
     char registroData[256];
+
+    //////////////////// Archivo 1///////////////////////////////////////////
     fgets(registroData, sizeof(registroData), archCapitulos); // Salto la cabecera
     while (fgets(registroData, sizeof(registroData), archCapitulos))
     {
@@ -60,6 +62,7 @@ int main(int argc, char *argv[])
         printf("Periodo: %s | Nivel: %s | Indice: %f\n", verFecha, registros_cap[total].nivelGeneralAperturas, registros_cap[total].valor);
         total++;
     }
+    //////////Archivo 2/////////////////////////
     fgets(registroData, sizeof(registroData), archItems); // Salto la cabecera
     while (fgets(registroData, sizeof(registroData), archItems))
     {
