@@ -4,7 +4,7 @@
 /*typedef struct
 {
     Fecha periodo;
-    char clasificador[20]; // "Nivel general", "Cap�tulos", "�tems"
+    char clasificador[20]; // "Nivel general", "Capitulos", "items"
     char nivelGeneralAperturas[50];
     char tipoVariable[20]; // "indice_icc", "var_mensual", "var_interanual"
     double valor;
@@ -12,7 +12,7 @@
 
 int main(int argc, char *argv[])
 {
-    RegistroICC registros_cap[MAX_REGISTROS];
+    RegistroICC registros[MAX_REGISTROS];
     int total = 0;
 
     FILE *archCapitulos = fopen(argv[1], "r");
@@ -27,8 +27,7 @@ int main(int argc, char *argv[])
     char registroData[256];
 
     //////////////////// Archivo 1///////////////////////////////////////////
-    printf("%-12s | %-30s | %-10s | %-15s\n", "Periodo", "Nivel", "Indice", "Clasificador");
-    printf("-------------------------------------------------------------------------------\n");
+
     fgets(registroData, sizeof(registroData), archCapitulos); // Salto la cabecera
     while (fgets(registroData, sizeof(registroData), archCapitulos))
     {
@@ -38,7 +37,7 @@ int main(int argc, char *argv[])
         // Campo fecha
         Fecha nuevaFecha;
         FechaCrearDesdeCadena(&nuevaFecha, periodo);
-        registros_cap[total].periodo = nuevaFecha;
+        registros[total].periodo = nuevaFecha;
 
         // Campo nivel
         decodificar(nivel);
@@ -46,32 +45,22 @@ int main(int argc, char *argv[])
         primeraMayus(nivel);
 
         // Clasificador
-        clasificador(&registros_cap[total], nivel);
+        clasificador(&registros[total], nivel);
 
         // Campo indice
         reemplazarComaPorPunto(indiceStr);
         double valorNum = strtod(indiceStr, NULL);
 
         // Se copia a la estructura de Registros
-        strcpy(registros_cap[total].nivelGeneralAperturas, nivel);
-        strcpy(registros_cap[total].tipoVariable, "indice_icc");
-        registros_cap[total].valor = valorNum;
+        strcpy(registros[total].nivelGeneralAperturas, nivel);
+        strcpy(registros[total].tipoVariable, "indice_icc");
+        registros[total].valor = valorNum;
 
-        // Solo con fines de ver si va todo bien
-        char verFecha[11];
-        FechaConvertirAGuiones(verFecha, &(registros_cap[total].periodo));
-        printf("%-12s | %-30s | %-10f | %-15s\n",
-               verFecha,
-               registros_cap[total].nivelGeneralAperturas,
-               registros_cap[total].valor,
-               registros_cap[total].clasificador);
         total++;
     }
 
-    printf("\n\n\n\n\n\n Archivo 2\n\n\n\n\n\n");
     //////////Archivo 2/////////////////////////
-    printf("%-12s | %-60s | %-10s | %-15s\n", "Periodo", "Nivel", "Indice", "Clasificador");
-    printf("--------------------------------------------------------------------------------------------------------\n");
+
     fgets(registroData, sizeof(registroData), archItems); // Salto la cabecera
     while (fgets(registroData, sizeof(registroData), archItems))
     {
@@ -81,7 +70,7 @@ int main(int argc, char *argv[])
         // Campo fecha
         Fecha nuevaFecha;
         FechaCrearDesdeCadena(&nuevaFecha, periodo);
-        registros_cap[total].periodo = nuevaFecha;
+        registros[total].periodo = nuevaFecha;
 
         // Campo nivel
         desencriptarArchItems(nivel);
@@ -90,33 +79,25 @@ int main(int argc, char *argv[])
         primeraMayus(nivel);
 
         // Clasificador
-        clasificadorEnItem(&registros_cap[total]);
+        clasificadorEnItem(&registros[total]);
 
         // Campo indice
         reemplazarComaPorPunto(indiceStr);
         double valorNum = strtod(indiceStr, NULL);
 
         // Se copia a la estructura de Registros
-        strcpy(registros_cap[total].nivelGeneralAperturas, nivel);
-        strcpy(registros_cap[total].tipoVariable, "indice_icc");
-        registros_cap[total].valor = valorNum;
+        strcpy(registros[total].nivelGeneralAperturas, nivel);
+        strcpy(registros[total].tipoVariable, "indice_icc");
+        registros[total].valor = valorNum;
 
-        // Solo con fines de ver si va todo bien
-
-        char verFecha[11];
-        FechaConvertirAGuiones(verFecha, &(registros_cap[total].periodo));
-        printf("%-12s | %-60s | %-10f | %-15s\n",
-               verFecha,
-               registros_cap[total].nivelGeneralAperturas,
-               registros_cap[total].valor,
-               registros_cap[total].clasificador);
         total++;
     }
-
+    mostrarRegistrosICC(registros, total);
     fclose(archCapitulos);
     fclose(archItems);
     return TODO_OK;
 }
+
 void reemplazarComaPorPunto(char *indice)
 {
     while (*indice)
@@ -239,4 +220,21 @@ void quitarAnteriorAlPrimerGuion(char *cadena)
     char *act = strchr(cadena, '_');
     act++;
     strcpy(cadena, act);
+}
+void mostrarRegistrosICC(RegistroICC *registros, int total)
+{
+    printf("%-12s | %-60s | %-20s | %-15s\n", "Periodo", "Nivel", "Indice", "Clasificador");
+    printf("-------------------------------------------------------------------------------------------------------------------------\n");
+
+    for (int i = 0; i < total; i++)
+    {
+        char fechaStr[11];
+        FechaConvertirAGuiones(fechaStr, &(registros[i].periodo));
+
+        printf("%-12s | %-60s | %-20f | %-15s\n",
+               fechaStr,
+               registros[i].nivelGeneralAperturas,
+               registros[i].valor,
+               registros[i].clasificador);
+    }
 }

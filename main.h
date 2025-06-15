@@ -29,5 +29,5 @@ void clasificador(RegistroICC *reg, char *campo);
 void clasificadorEnItem(RegistroICC *reg);
 void desencriptarArchItems(char *campo);
 void quitarAnteriorAlPrimerGuion(char *cadena);
-
+void mostrarRegistrosICC(RegistroICC *registros, int total);
 #endif // MAIN_H_INCLUDED
