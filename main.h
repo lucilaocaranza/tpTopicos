@@ -21,5 +21,13 @@ typedef struct
     char tipoVariable[20]; // "indice_icc", "var_mensual", "var_interanual"
     double valor;
 } RegistroICC;
+void reemplazarComaPorPunto(char *indice);
+void guionAespacio(char *cadena);
+void primeraMayus(char *cadena);
+void decodificar(char *cadena);
+void clasificador(RegistroICC *reg, char *campo);
+void clasificadorEnItem(RegistroICC *reg);
+void desencriptarArchItems(char *campo);
+void quitarAnteriorAlPrimerGuion(char *cadena);
 
 #endif // MAIN_H_INCLUDED

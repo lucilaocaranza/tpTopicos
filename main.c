@@ -10,14 +10,6 @@
     double valor;
 } RegistroICC;*/
 
-void reemplazarComaPorPunto(char *indice);
-void guionAespacio(char *cadena);
-void primeraMayus(char *cadena);
-void decodificar(char *cadena);
-void clasificador(RegistroICC *reg, char *campo);
-void desencriptarArchItems(char *campo);
-void quitarAnteriorAlPrimerGuion(char *cadena);
-
 int main(int argc, char *argv[])
 {
     RegistroICC registros_cap[MAX_REGISTROS];
@@ -35,6 +27,8 @@ int main(int argc, char *argv[])
     char registroData[256];
 
     //////////////////// Archivo 1///////////////////////////////////////////
+    printf("%-12s | %-30s | %-10s | %-15s\n", "Periodo", "Nivel", "Indice", "Clasificador");
+    printf("-------------------------------------------------------------------------------\n");
     fgets(registroData, sizeof(registroData), archCapitulos); // Salto la cabecera
     while (fgets(registroData, sizeof(registroData), archCapitulos))
     {
@@ -66,12 +60,18 @@ int main(int argc, char *argv[])
         // Solo con fines de ver si va todo bien
         char verFecha[11];
         FechaConvertirAGuiones(verFecha, &(registros_cap[total].periodo));
-        printf("Periodo: %s | Nivel: %s | Indice: %f |Clasificador: %s\n", verFecha, registros_cap[total].nivelGeneralAperturas, registros_cap[total].valor, registros_cap[total].clasificador);
+        printf("%-12s | %-30s | %-10f | %-15s\n",
+               verFecha,
+               registros_cap[total].nivelGeneralAperturas,
+               registros_cap[total].valor,
+               registros_cap[total].clasificador);
         total++;
     }
 
     printf("\n\n\n\n\n\n Archivo 2\n\n\n\n\n\n");
     //////////Archivo 2/////////////////////////
+    printf("%-12s | %-60s | %-10s | %-15s\n", "Periodo", "Nivel", "Indice", "Clasificador");
+    printf("--------------------------------------------------------------------------------------------------------\n");
     fgets(registroData, sizeof(registroData), archItems); // Salto la cabecera
     while (fgets(registroData, sizeof(registroData), archItems))
     {
@@ -102,9 +102,14 @@ int main(int argc, char *argv[])
         registros_cap[total].valor = valorNum;
 
         // Solo con fines de ver si va todo bien
+
         char verFecha[11];
         FechaConvertirAGuiones(verFecha, &(registros_cap[total].periodo));
-        printf("Periodo: %s | Nivel: %s | Indice: %f |Clasificador: %s\n", verFecha, registros_cap[total].nivelGeneralAperturas, registros_cap[total].valor, registros_cap[total].clasificador);
+        printf("%-12s | %-60s | %-10f | %-15s\n",
+               verFecha,
+               registros_cap[total].nivelGeneralAperturas,
+               registros_cap[total].valor,
+               registros_cap[total].clasificador);
         total++;
     }
 
