@@ -11,6 +11,9 @@
 } RegistroICC;*/
 
 void reemplazarComaPorPunto(char *indice);
+void guionAespacio(char *cadena);
+void primeraMayus(char *cadena);
+void decodificar(char *cadena);
 
 int main(int argc, char *argv[])
 {
@@ -39,19 +42,22 @@ int main(int argc, char *argv[])
         registros_cap[total].periodo = nuevaFecha;
 
         // Campo nivel
-
+        decodificar(nivel);
+        guionAespacio(nivel);
+        primeraMayus(nivel);
         // Campo indice
         reemplazarComaPorPunto(indiceStr);
         double valorNum = strtod(indiceStr, NULL);
 
         // Se copia a la estructura de Registros
+        strcpy(registros_cap[total].nivelGeneralAperturas, nivel);
         strcpy(registros_cap[total].tipoVariable, "indice_icc");
         registros_cap[total].valor = valorNum;
 
         // Solo con fines de ver si va todo bien
         char verFecha[11];
         FechaConvertirAGuiones(verFecha, &(registros_cap[total].periodo));
-        printf("Periodo: %s | Nivel: %s | Indice: %f\n", verFecha, nivel, valorNum);
+        printf("Periodo: %s | Nivel: %s | Indice: %f\n", verFecha, registros_cap[total].nivelGeneralAperturas, registros_cap[total].valor);
         total++;
     }
 
@@ -70,3 +76,58 @@ void reemplazarComaPorPunto(char *indice)
         indice++;
     }
 };
+void guionAespacio(char *cadena)
+{
+    while (*cadena != '\0')
+    {
+        if (*cadena == '_')
+        {
+            *cadena = ' ';
+        }
+        cadena++;
+    }
+}
+void primeraMayus(char *cadena)
+{
+    int letra1 = 1;
+
+    while (*cadena != '\0')
+    {
+        if (isalpha(*cadena))
+        {
+            if (letra1)
+            {
+                *cadena = toupper(*cadena);
+                letra1 = 0;
+            }
+            else
+            {
+                *cadena = tolower(*cadena);
+            }
+        }
+        else if (*cadena == ' ')
+        {
+            letra1 = 0;
+        }
+        cadena++;
+    }
+}
+void decodificar(char *cadena)
+{
+
+    int pos = 0;
+    while (*cadena != 0)
+    {
+        char c = *cadena;
+        char base;
+        if ((c >= 'A' && c <= 'Z') || (c >= 'a' && c <= 'z'))
+        {
+            base = (c >= 'a') ? 'a' : 'A';
+            int desp = (pos % 2 == 0) ? 4 : 2;
+
+            *cadena = base + ((c - base + desp) % 26);
+        }
+        pos++;
+        cadena++;
+    }
+}
