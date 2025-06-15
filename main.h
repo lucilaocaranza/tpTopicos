@@ -4,6 +4,8 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include "./TDAFecha/TDAFecha.h"
+
 #define ARG_INDICE_ICC 1
 #define ARG_INDICE_ITEMS 2
 #define TODO_OK 0
@@ -12,7 +14,7 @@
 
 typedef struct
 {
-    char periodo[11];      // "aaaa-mm-dd"
+    Fecha periodo;
     char clasificador[20]; // "Nivel general", "Cap�tulos", "�tems"
     char nivelGeneralAperturas[50];
     char tipoVariable[20]; // "indice_icc", "var_mensual", "var_interanual"

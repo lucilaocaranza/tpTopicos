@@ -3,7 +3,7 @@
 // tpTopicos.exe indices_icc_general_capitulos.csv Indices_items_obra.csv
 /*typedef struct
 {
-    char periodo[11];      // "aaaa-mm-dd"
+    Fecha periodo;
     char clasificador[20]; // "Nivel general", "Cap�tulos", "�tems"
     char nivelGeneralAperturas[50];
     char tipoVariable[20]; // "indice_icc", "var_mensual", "var_interanual"
@@ -34,6 +34,9 @@ int main(int argc, char *argv[])
         char *nivel = strtok(NULL, ";\"");
         char *indiceStr = strtok(NULL, ";\"\n");
         // Campo fecha
+        Fecha nuevaFecha;
+        FechaCrearDesdeCadena(&nuevaFecha, periodo);
+        registros_cap[total].periodo = nuevaFecha;
 
         // Campo nivel
 
@@ -45,7 +48,10 @@ int main(int argc, char *argv[])
         strcpy(registros_cap[total].tipoVariable, "indice_icc");
         registros_cap[total].valor = valorNum;
 
-        printf("Periodo: %s | Nivel: %s | Indice: %f\n", periodo, nivel, valorNum);
+        // Solo con fines de ver si va todo bien
+        char verFecha[11];
+        FechaConvertirAGuiones(verFecha, &(registros_cap[total].periodo));
+        printf("Periodo: %s | Nivel: %s | Indice: %f\n", verFecha, nivel, valorNum);
         total++;
     }
 
