@@ -60,6 +60,34 @@ int main(int argc, char *argv[])
         printf("Periodo: %s | Nivel: %s | Indice: %f\n", verFecha, registros_cap[total].nivelGeneralAperturas, registros_cap[total].valor);
         total++;
     }
+    fgets(registroData, sizeof(registroData), archItems); // Salto la cabecera
+    while (fgets(registroData, sizeof(registroData), archItems))
+    {
+        char *periodo = strtok(registroData, ";\"");
+        char *nivel = strtok(NULL, ";\"");
+        char *indiceStr = strtok(NULL, ";\"\n");
+        // Campo fecha
+        Fecha nuevaFecha;
+        FechaCrearDesdeCadena(&nuevaFecha, periodo);
+        registros_cap[total].periodo = nuevaFecha;
+
+        // Campo nivel
+
+        // Campo indice
+        reemplazarComaPorPunto(indiceStr);
+        double valorNum = strtod(indiceStr, NULL);
+
+        // Se copia a la estructura de Registros
+        strcpy(registros_cap[total].nivelGeneralAperturas, nivel);
+        strcpy(registros_cap[total].tipoVariable, "indice_icc");
+        registros_cap[total].valor = valorNum;
+
+        // Solo con fines de ver si va todo bien
+        char verFecha[11];
+        FechaConvertirAGuiones(verFecha, &(registros_cap[total].periodo));
+        printf("Periodo: %s | Nivel: %s | Indice: %f\n", verFecha, registros_cap[total].nivelGeneralAperturas, registros_cap[total].valor);
+        total++;
+    }
 
     fclose(archCapitulos);
     fclose(archItems);
