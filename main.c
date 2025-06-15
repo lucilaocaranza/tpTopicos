@@ -14,6 +14,9 @@ void reemplazarComaPorPunto(char *indice);
 void guionAespacio(char *cadena);
 void primeraMayus(char *cadena);
 void decodificar(char *cadena);
+void clasificador(RegistroICC* reg, char* campo);
+void desencriptarArchItems(char* campo);
+void quitarAnteriorAlPrimerGuion(char* cadena);
 
 int main(int argc, char *argv[])
 {
@@ -45,6 +48,14 @@ int main(int argc, char *argv[])
         decodificar(nivel);
         guionAespacio(nivel);
         primeraMayus(nivel);
+        clasificador(&registros_cap[total],nivel);
+
+        //estas son para el archivo Items
+//        desencriptarArchItems(nivel);
+//        quitarAnteriorAlPrimerGuion(nivel);
+//        guionAespacio(nivel);
+//        primeraMayus(nivel);
+
         // Campo indice
         reemplazarComaPorPunto(indiceStr);
         double valorNum = strtod(indiceStr, NULL);
@@ -57,7 +68,7 @@ int main(int argc, char *argv[])
         // Solo con fines de ver si va todo bien
         char verFecha[11];
         FechaConvertirAGuiones(verFecha, &(registros_cap[total].periodo));
-        printf("Periodo: %s | Nivel: %s | Indice: %f\n", verFecha, registros_cap[total].nivelGeneralAperturas, registros_cap[total].valor);
+        printf("Periodo: %s | Nivel: %s | Indice: %f |Clasificador: %s\n", verFecha, registros_cap[total].nivelGeneralAperturas, registros_cap[total].valor, registros_cap[total].clasificador);
         total++;
     }
     fgets(registroData, sizeof(registroData), archItems); // Salto la cabecera
@@ -158,4 +169,56 @@ void decodificar(char *cadena)
         pos++;
         cadena++;
     }
+}
+void clasificador(RegistroICC* reg, char* campo)
+{
+    if (strcmp(campo, "Nivel general") == 0)
+        strcpy(reg->clasificador, "Nivel general");
+    else
+        strcpy(reg->clasificador, "Capitulos");
+}
+void desencriptarArchItems(char* campo)
+{
+    while(*campo)
+    {
+        switch(*campo)
+        {
+        case '@':
+            *campo = 'a';
+            break;
+        case '8':
+            *campo = 'b';
+            break;
+        case '3':
+            *campo = 'e';
+            break;
+        case '1':
+            *campo = 'i';
+            break;
+        case '0':
+            *campo = 'o';
+            break;
+        case '$':
+            *campo = 's';
+            break;
+        case '7':
+            *campo = 't';
+            break;
+        case '|':
+            *campo = 'l';
+            break;
+        case '5':
+            *campo = 'm';
+            break;
+        case '9':
+            *campo = 'n';
+            break;
+        }
+        campo++;
+    }
+}
+void quitarAnteriorAlPrimerGuion(char* cadena)
+{
+    char* act = strchr(cadena,'_');
+    strcpy(cadena,act);
 }
