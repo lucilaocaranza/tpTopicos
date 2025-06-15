@@ -69,6 +69,8 @@ int main(int argc, char *argv[])
         printf("Periodo: %s | Nivel: %s | Indice: %f |Clasificador: %s\n", verFecha, registros_cap[total].nivelGeneralAperturas, registros_cap[total].valor, registros_cap[total].clasificador);
         total++;
     }
+
+    printf("\n\n\n\n\n\n Archivo 2\n\n\n\n\n\n");
     //////////Archivo 2/////////////////////////
     fgets(registroData, sizeof(registroData), archItems); // Salto la cabecera
     while (fgets(registroData, sizeof(registroData), archItems))
@@ -87,6 +89,9 @@ int main(int argc, char *argv[])
         guionAespacio(nivel);
         primeraMayus(nivel);
 
+        // Clasificador
+        clasificadorEnItem(&registros_cap[total]);
+
         // Campo indice
         reemplazarComaPorPunto(indiceStr);
         double valorNum = strtod(indiceStr, NULL);
@@ -99,7 +104,7 @@ int main(int argc, char *argv[])
         // Solo con fines de ver si va todo bien
         char verFecha[11];
         FechaConvertirAGuiones(verFecha, &(registros_cap[total].periodo));
-        printf("Periodo: %s | Nivel: %s | Indice: %f\n", verFecha, registros_cap[total].nivelGeneralAperturas, registros_cap[total].valor);
+        printf("Periodo: %s | Nivel: %s | Indice: %f |Clasificador: %s\n", verFecha, registros_cap[total].nivelGeneralAperturas, registros_cap[total].valor, registros_cap[total].clasificador);
         total++;
     }
 
@@ -179,6 +184,10 @@ void clasificador(RegistroICC *reg, char *campo)
         strcpy(reg->clasificador, "Nivel general");
     else
         strcpy(reg->clasificador, "Capitulos");
+}
+void clasificadorEnItem(RegistroICC *reg)
+{
+    strcpy(reg->clasificador, "Items");
 }
 void desencriptarArchItems(char *campo)
 {
