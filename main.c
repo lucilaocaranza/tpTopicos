@@ -7,7 +7,7 @@
 #include "../../TDA/TDAFecha/Fecha.h"
 
 typedef struct {
-    char periodo[11];
+    Fecha periodo;
     char nivel_general_aperturas[41];
     double indice_icc;
     char Clasificador[14];
@@ -35,14 +35,11 @@ int main()
     La función que llame deberá comprobar si es una fecha válida.
 */
 void calcularVarMensual(void* elem, void* datos) {
-    Fecha fechaAct, fechaPrev;
     Fila* fila = elem, filaPrev = *fila;
     Vector* vec = datos;
     int res;
 
-    fechaDeCadena(&fechaAct, fila->periodo);
-    fechaPrev = fechaRestarMeses(&fechaAct, 1);
-    fechaACadena(&fechaPrev, filaPrev.periodo);
+    filaPrev.periodo = fechaRestarMeses(&fila->periodo, 1);
     res = vectorOrdBuscar(vec, &filaPrev, compararPorFecha);
     if (res != 0) {
         double porcentaje = calcularVarPorc(fila->indice_icc, filaPrev.indice_icc);
@@ -55,14 +52,11 @@ void calcularVarMensual(void* elem, void* datos) {
     La función que llame deberá comprobar si es una fecha válida.
 */
 void calcularVarInteranual(void* elem, void* datos) {
-    Fecha fechaAct, fechaPrev;
     Fila* fila = elem, filaPrev = *fila;
     Vector* vec = datos;
     int res;
 
-    fechaDeCadena(&fechaAct, fila->periodo);
-    fechaPrev = fechaRestarMeses(&fechaAct, 12);
-    fechaACadena(&fechaPrev, filaPrev.periodo);
+    filaPrev.periodo = fechaRestarMeses(&fila->periodo, 12);
     res = vectorOrdBuscar(vec, &filaPrev, compararPorFecha);
     if (res != 0) {
         double porcentaje = calcularVarPorc(fila->indice_icc, filaPrev.indice_icc);
@@ -74,11 +68,7 @@ int compararPorFecha(const void* a, const void* b) {
     const Fila* filaA = a;
     const Fila* filaB = b;
 
-    Fecha fAct, fPrev;
-    fechaDeCadena(&fAct, filaA->periodo);
-    fechaDeCadena(&fPrev, filaB->periodo);
-
-    int cmp = fechaComparar(&fAct, &fPrev);
+    int cmp = fechaComparar(&filaA->periodo, &filaB->periodo);
     if (cmp != 0) {
         return cmp;
     }
