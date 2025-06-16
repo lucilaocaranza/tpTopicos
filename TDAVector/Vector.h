@@ -7,10 +7,10 @@
 #define TAM 10
 
 #define TODO_OK 0
-#define DUPLICADO 1
-#define LLENO 2
-#define SIN_MEM 3
-#define ERR_ARCHIVO 4
+#define ERR_ARCHIVO 1
+#define DUPLICADO 2
+#define LLENO 3
+#define SIN_MEM 4
 
 #define CAP_INI 8 // Cant elementos
 #define FACTOR_INCR 1.5 // Incr 50%

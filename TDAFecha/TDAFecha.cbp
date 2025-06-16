@@ -34,10 +34,10 @@
 				</Linker>
 			</Target>
 		</Build>
-		<Unit filename="Fecha.c">
+		<Unit filename="TDAFecha.c">
 			<Option compilerVar="CC" />
 		</Unit>
-		<Unit filename="Fecha.h" />
+		<Unit filename="TDAFecha.h" />
 		<Extensions />
 	</Project>
 </CodeBlocks_project_file>
