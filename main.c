@@ -3,8 +3,8 @@
 #include <string.h>
 #include <math.h>
 
-#include "../../TDA/TDA2/TDAVector/Vector.h"
-#include "../../TDA/TDAFecha/Fecha.h"
+#include "./TDAVector/Vector.h"
+#include "./TDAFecha/Fecha.h"
 
 typedef struct {
     Fecha periodo;
