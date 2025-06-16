@@ -21,6 +21,8 @@ typedef struct
     char tipoVariable[20]; // "indice_icc", "var_mensual", "var_interanual"
     double valor;
 } RegistroICC;
+
+int comparar(const void* a, const void* b);
 void reemplazarComaPorPunto(char *indice);
 void guionAespacio(char *cadena);
 void primeraMayus(char *cadena);

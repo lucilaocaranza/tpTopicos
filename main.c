@@ -92,10 +92,43 @@ int main(int argc, char *argv[])
 
         total++;
     }
+
+    qsort(registros, total, sizeof(RegistroICC), comparar);
+
     mostrarRegistrosICC(registros, total);
     fclose(archCapitulos);
     fclose(archItems);
     return TODO_OK;
+}
+
+int comparar(const void* a, const void* b) {
+    const RegistroICC* regA = a;
+    const RegistroICC* regB = b;
+
+    int cmp = FechaComparar(&regA->periodo, &regB->periodo);
+    if (cmp) {
+        return cmp;
+    }
+
+    char clasifA = *regA->clasificador;
+    char clasifB = *regB->clasificador;
+
+    if (clasifA == clasifB) return 0;
+
+    if (clasifA == 'N') { // Nivel general
+        return -1;
+    }
+    else if (clasifA == 'I') { // Items
+        return 1;
+    }
+
+    // clasifA == Capitulos
+    if (clasifB == 'N') {
+        return 1;
+    }
+    else {
+        return -1;
+    }
 }
 
 void reemplazarComaPorPunto(char *indice)

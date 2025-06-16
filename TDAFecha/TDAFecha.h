@@ -15,5 +15,6 @@ typedef struct
 
 int es_fecha_valida(const char *fecha);
 int FechaCrearDesdeCadena(Fecha *fechaNueva, const char *fecha);
+int FechaComparar(const Fecha* fechaA, const Fecha* fechaB);
 void FechaConvertirAGuiones(char *strDestino, Fecha *origen);
 #endif // TDAFECHA_H_INCLUDED
