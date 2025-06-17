@@ -92,29 +92,30 @@ int main(int argc, char *argv[])
 
         total++;
     }
+    fclose(archCapitulos);
+    fclose(archItems);
 
     // Ordenar
     qsort(registros, total, sizeof(RegistroICC), compararRegistros);
 
     mostrarRegistrosICC(registros, total);
-    fclose(archCapitulos);
-    fclose(archItems);
+
     return TODO_OK;
 }
 
-int compararRegistros(const void* a, const void* b)
+int compararRegistros(const void *a, const void *b)
 {
-    const RegistroICC* regA = a;
-    const RegistroICC* regB = b;
+    const RegistroICC *regA = a;
+    const RegistroICC *regB = b;
 
     int cmp = FechaComparar(&regA->periodo, &regB->periodo);
-    if (cmp) 
+    if (cmp)
         return cmp;
 
     char clasifA = *regA->clasificador;
     char clasifB = *regB->clasificador;
 
-    if (clasifA == clasifB) 
+    if (clasifA == clasifB)
         return 0;
 
     if (clasifA == 'N') // Nivel general
@@ -256,7 +257,7 @@ void quitarAnteriorAlPrimerGuion(char *cadena)
 void mostrarRegistrosICC(RegistroICC *registros, int total)
 {
     printf("%-12s | %-60s | %-20s | %-15s\n", "Periodo", "Nivel", "Indice", "Clasificador");
-    printf("-------------------------------------------------------------------------------------------------------------------------\n");
+    printf("---------------------------------------------------------------------------------------------------------------------\n");
 
     for (int i = 0; i < total; i++)
     {
