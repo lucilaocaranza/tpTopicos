@@ -139,26 +139,10 @@ Fecha fechaRestarMeses(const Fecha* f, int meses) {
     return fSumar;
 }
 
-// TODO: Unir con el de abajo
-int fechaComparar(const Fecha* fecha1, const Fecha* fecha2) {
-    Fecha f1 = *fecha1, f2 = *fecha2;
-    int cmp;
-    if ((cmp = f1.anio - f2.anio) != 0){
-        return cmp;
-    }
-
-    if ((cmp = f1.mes - f2.mes) != 0) {
-        return cmp;
-    }
-
-    return f1.dia - f2.dia;
-}
-
-// TODO: Unir con el de arriba
 int FechaComparar(const Fecha* fechaA, const Fecha* fechaB)
 {
-    int cmp = fechaA->anio - fechaB->anio;
-    if (cmp != 0)
+    int cmp;
+    if ((cmp = fechaA->anio - fechaB->anio) != 0)
         return cmp;
 
     if ((cmp = fechaA->mes - fechaB->mes) != 0)

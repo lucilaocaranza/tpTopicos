@@ -5,12 +5,9 @@
 #include <stdlib.h>
 #include <string.h>
 #include <ctype.h>
-<<<<<<< HEAD
 #include <math.h>
 
 #include "./TDAVector/Vector.h"
-=======
->>>>>>> main
 #include "./TDAFecha/TDAFecha.h"
 
 #define ARG_INDICE_ICC 1
@@ -52,5 +49,6 @@ void calcularVarMensual(void* elem, void* datos);
 void calcularVarInteranual(void* elem, void* datos);
 int compararPorFecha(const void* a, const void* b);
 double calcularVarPorc(double indActual, double indPrevio);
+void mostrarRegistroVector(void* elem, void* datos);
 
 #endif // MAIN_H_INCLUDED

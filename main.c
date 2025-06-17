@@ -256,6 +256,7 @@ void quitarAnteriorAlPrimerGuion(char *cadena)
     act++;
     strcpy(cadena, act);
 }
+
 void mostrarRegistrosICC(RegistroICC *registros, int total)
 {
     printf("%-12s | %-60s | %-20s | %-15s\n", "Periodo", "Nivel", "Indice", "Clasificador");
@@ -276,60 +277,77 @@ void mostrarRegistrosICC(RegistroICC *registros, int total)
 
 void probarVector(RegistroICC* registros, int total) {
     Vector vec;
-    vectorCrear(&vec, sizeof(Fila));
+    vectorCrear(&vec, sizeof(RegistroICC));
 
-    Fila fila;
+    RegistroICC fila;
 
     for (int i = 0; i < total; i++) {
-        fila.periodo = registros[i].periodo;
-        strcpy(fila.nivelGeneralAperturas, registros[i].nivelGeneralAperturas);
-        strcpy(fila.clasificador, registros[i].clasificador);
-        fila.indiceICC = registros[i].valor;
-
+        fila = registros[i];
         vectorInsertarAlFinal(&vec, &fila);
     }
 
+    vectorOrdenar(&vec, QSORT, compararPorFecha);
+
     vectorRecorrer(&vec, calcularVarMensual, &vec);
     vectorRecorrer(&vec, calcularVarInteranual, &vec);
+
+    printf("== Mostrar vector ==\n\n");
+    printf("%-12s | %-60s | %-20s | %-15s\n", "Periodo", "Nivel", "Indice", "Clasificador");
+    printf("---------------------------------------------------------------------------------------------------------------------\n");
+
+    vectorRecorrer(&vec, mostrarRegistroVector, &vec);
 }
 
 void calcularVarMensual(void* elem, void* datos) {
-    Fila* fila = elem, filaPrev = *fila;
+    RegistroICC *fila = elem, filaPrev = *fila;
     Vector* vec = datos;
     int res;
 
     filaPrev.periodo = fechaRestarMeses(&fila->periodo, 1);
     res = vectorOrdBuscar(vec, &filaPrev, compararPorFecha);
     if (res != 0) {
-        double porcentaje = calcularVarPorc(fila->indiceICC, filaPrev.indiceICC);
-        fila->varMensual = floor(porcentaje * 100) / 100;
+        double porcentaje = calcularVarPorc(fila->valor, filaPrev.valor);
+        //fila->varMensual = floor(porcentaje * 100) / 100;
     }
 }
 
 void calcularVarInteranual(void* elem, void* datos) {
-    Fila* fila = elem, filaPrev = *fila;
+    RegistroICC *fila = elem, filaPrev = *fila;
     Vector* vec = datos;
     int res;
 
     filaPrev.periodo = fechaRestarMeses(&fila->periodo, 12);
     res = vectorOrdBuscar(vec, &filaPrev, compararPorFecha);
     if (res != 0) {
-        double porcentaje = calcularVarPorc(fila->indiceICC, filaPrev.indiceICC);
-        fila->varMensual = floor(porcentaje * 100) / 100;
+        double porcentaje = calcularVarPorc(fila->valor, filaPrev.valor);
+        //fila->varMensual = floor(porcentaje * 100) / 100;
     }
 }
 
 int compararPorFecha(const void* a, const void* b) {
-    const Fila* filaA = a;
-    const Fila* filaB = b;
+    const RegistroICC *filaA = a;
+    const RegistroICC *filaB = b;
 
-    int cmp = fechaComparar(&filaA->periodo, &filaB->periodo);
+    int cmp = FechaComparar(&filaA->periodo, &filaB->periodo);
     if (cmp != 0) {
         return cmp;
     }
 
-    if ((cmp = strcmp(filaA->clasificador, filaB->clasificador)) != 0) {
-        return cmp;
+    char clasifA = *filaA->clasificador;
+    char clasifB = *filaB->clasificador;
+
+    if (clasifA != clasifB) {
+        if (clasifA == 'N') // Nivel general
+            return -1;
+        else if (clasifA == 'I') // Items
+            return 1;
+
+        // clasifA == Capitulos
+
+        if (clasifB == 'N')
+            return 1;
+        else
+            return -1;
     }
 
     return strcmp(filaA->nivelGeneralAperturas, filaB->nivelGeneralAperturas);
@@ -337,4 +355,17 @@ int compararPorFecha(const void* a, const void* b) {
 
 double calcularVarPorc(double indActual, double indPrevio) {
     return (indActual/ indPrevio - 1) * 100;
+}
+
+void mostrarRegistroVector(void* elem, void* datos) {
+    RegistroICC *registro = elem;
+
+    char fechaStr[11];
+    FechaConvertirAGuiones(fechaStr, &(registro->periodo));
+
+    printf("%-12s | %-60s | %-20f | %-15s\n",
+           fechaStr,
+           registro->nivelGeneralAperturas,
+           registro->valor,
+           registro->clasificador);
 }
