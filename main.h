@@ -16,13 +16,13 @@
 typedef struct
 {
     Fecha periodo;
-    char clasificador[20]; // "Nivel general", "Cap�tulos", "�tems"
+    char clasificador[20]; // "Nivel general", "Cap tulos", " tems"
     char nivelGeneralAperturas[50];
     char tipoVariable[20]; // "indice_icc", "var_mensual", "var_interanual"
     double valor;
 } RegistroICC;
 
-int comparar(const void* a, const void* b);
+int compararRegistros(const void* a, const void* b);
 void reemplazarComaPorPunto(char *indice);
 void guionAespacio(char *cadena);
 void primeraMayus(char *cadena);
@@ -32,4 +32,5 @@ void clasificadorEnItem(RegistroICC *reg);
 void desencriptarArchItems(char *campo);
 void quitarAnteriorAlPrimerGuion(char *cadena);
 void mostrarRegistrosICC(RegistroICC *registros, int total);
+
 #endif // MAIN_H_INCLUDED

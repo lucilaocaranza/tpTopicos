@@ -41,15 +41,14 @@ int FechaCrearDesdeCadena(Fecha *fechaNueva, const char *fechaStr)
   return TODO_OK;
 }
 
-int FechaComparar(const Fecha* fechaA, const Fecha* fechaB) {
+int FechaComparar(const Fecha* fechaA, const Fecha* fechaB)
+{
     int cmp = fechaA->anio - fechaB->anio;
-    if (cmp != 0) {
+    if (cmp != 0)
         return cmp;
-    }
 
-    if ((cmp = fechaA->mes - fechaB->mes) != 0) {
+    if ((cmp = fechaA->mes - fechaB->mes) != 0)
         return cmp;
-    }
 
     return fechaA->dia - fechaB->dia;
 }
