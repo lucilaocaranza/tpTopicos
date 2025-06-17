@@ -16,6 +16,7 @@
 #define ERR_ARCHIVO 1
 #define MAX_REGISTROS 1000
 
+// Estructura final para exportar los registros binarios
 typedef struct
 {
     Fecha periodo;
@@ -25,7 +26,9 @@ typedef struct
     double valor;
 } RegistroICC;
 
-typedef struct {
+// Estructura intermedia para juntar y calcular todo
+typedef struct
+{
     Fecha periodo;
     char clasificador[20];
     char nivelGeneralAperturas[50];
@@ -38,13 +41,13 @@ void reemplazarComaPorPunto(char *indice);
 void guionAespacio(char *cadena);
 void primeraMayus(char *cadena);
 void decodificar(char *cadena);
-void clasificador(RegistroICC *reg, char *campo);
-void clasificadorEnItem(RegistroICC *reg);
+void clasificador(Fila *reg, char *campo);
+void clasificadorEnItem(Fila *reg);
 void desencriptarArchItems(char *campo);
 void quitarAnteriorAlPrimerGuion(char *cadena);
 void mostrarRegistrosICC(RegistroICC *registros, int total);
 
-void probarVector(RegistroICC* regs, int total);
+void probarVector(Vector* regs);
 void calcularVarMensual(void* elem, void* datos);
 void calcularVarInteranual(void* elem, void* datos);
 int compararPorFecha(const void* a, const void* b);
