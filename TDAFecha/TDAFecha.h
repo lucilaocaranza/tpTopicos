@@ -2,10 +2,12 @@
 #define TDAFECHA_H_INCLUDED
 #define FECHA_INVALIDA -1
 #define TODO_OK 0
+
 #include <stdio.h>
 #include <stdbool.h>
 #include <string.h>
 #include <stdlib.h>
+
 typedef struct
 {
     int dia,
@@ -27,5 +29,6 @@ int cantDiasMes(int m, int a);
 bool esBisiesto(int a);
 Fecha fechaRestarMeses(const Fecha*, int meses);
 int fechaComparar(const Fecha* f1, const Fecha* f2);
+int FechaComparar(const Fecha* fechaA, const Fecha* fechaB);
 
 #endif // TDAFECHA_H_INCLUDED

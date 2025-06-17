@@ -5,9 +5,12 @@
 #include <stdlib.h>
 #include <string.h>
 #include <ctype.h>
+<<<<<<< HEAD
 #include <math.h>
 
 #include "./TDAVector/Vector.h"
+=======
+>>>>>>> main
 #include "./TDAFecha/TDAFecha.h"
 
 #define ARG_INDICE_ICC 1
@@ -33,6 +36,7 @@ typedef struct {
     double varMensual, varInteranual;
 } Fila;
 
+int compararRegistros(const void* a, const void* b);
 void reemplazarComaPorPunto(char *indice);
 void guionAespacio(char *cadena);
 void primeraMayus(char *cadena);

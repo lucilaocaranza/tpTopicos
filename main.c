@@ -1,6 +1,17 @@
 #include "main.h"
 
-int main(int argc, char *argv[]) {
+// tpTopicos.exe indices_icc_general_capitulos.csv Indices_items_obra.csv
+/*typedef struct
+{
+    Fecha periodo;
+    char clasificador[20]; // "Nivel general", "Capitulos", "items"
+    char nivelGeneralAperturas[50];
+    char tipoVariable[20]; // "indice_icc", "var_mensual", "var_interanual"
+    double valor;
+} RegistroICC;*/
+
+int main(int argc, char *argv[])
+{
     RegistroICC registros[MAX_REGISTROS];
     int total = 0;
 
@@ -81,88 +92,46 @@ int main(int argc, char *argv[]) {
 
         total++;
     }
-    mostrarRegistrosICC(registros, total);
-    probarVector(registros, total);
 
     fclose(archCapitulos);
     fclose(archItems);
+
+    // Ordenar
+    //qsort(registros, total, sizeof(RegistroICC), compararRegistros);
+
+    mostrarRegistrosICC(registros, total);
+    probarVector(registros, total);
+
     return TODO_OK;
 }
 
-void probarVector(RegistroICC* registros, int total) {
-    Vector vec;
-    vectorCrear(&vec, sizeof(Fila));
+int compararRegistros(const void *a, const void *b)
+{
+    const RegistroICC *regA = a;
+    const RegistroICC *regB = b;
 
-    Fila fila;
-
-    for (int i = 0; i < total; i++) {
-        fila.periodo = registros[i].periodo;
-        strcpy(fila.nivelGeneralAperturas, registros[i].nivelGeneralAperturas);
-        strcpy(fila.clasificador, registros[i].clasificador);
-        fila.indiceICC = registros[i].valor;
-
-        vectorInsertarAlFinal(&vec, &fila);
-    }
-
-    vectorRecorrer(&vec, calcularVarMensual, &vec);
-    vectorRecorrer(&vec, calcularVarInteranual, &vec);
-}
-
-/**
-    Pasar NULL a filaPrev significa que es el primer mes y no debería ser calculado.
-    La función que llame deberá comprobar si es una fecha válida.
-*/
-void calcularVarMensual(void* elem, void* datos) {
-    Fila* fila = elem, filaPrev = *fila;
-    Vector* vec = datos;
-    int res;
-
-    filaPrev.periodo = fechaRestarMeses(&fila->periodo, 1);
-    res = vectorOrdBuscar(vec, &filaPrev, compararPorFecha);
-    if (res != 0) {
-        double porcentaje = calcularVarPorc(fila->indiceICC, filaPrev.indiceICC);
-        fila->varMensual = floor(porcentaje * 100) / 100;
-    }
-}
-
-/**
-    Pasar NULL a filaPrev significa que no paso un año y no debería ser calculado.
-    La función que llame deberá comprobar si es una fecha válida.
-*/
-void calcularVarInteranual(void* elem, void* datos) {
-    Fila* fila = elem, filaPrev = *fila;
-    Vector* vec = datos;
-    int res;
-
-    filaPrev.periodo = fechaRestarMeses(&fila->periodo, 12);
-    res = vectorOrdBuscar(vec, &filaPrev, compararPorFecha);
-    if (res != 0) {
-        double porcentaje = calcularVarPorc(fila->indiceICC, filaPrev.indiceICC);
-        fila->varMensual = floor(porcentaje * 100) / 100;
-    }
-}
-
-int compararPorFecha(const void* a, const void* b) {
-    const Fila* filaA = a;
-    const Fila* filaB = b;
-
-    int cmp = fechaComparar(&filaA->periodo, &filaB->periodo);
-    if (cmp != 0) {
+    int cmp = FechaComparar(&regA->periodo, &regB->periodo);
+    if (cmp)
         return cmp;
-    }
 
-    if ((cmp = strcmp(filaA->clasificador, filaB->clasificador)) != 0) {
-        return cmp;
-    }
+    char clasifA = *regA->clasificador;
+    char clasifB = *regB->clasificador;
 
-    return strcmp(filaA->nivelGeneralAperturas, filaB->nivelGeneralAperturas);
+    if (clasifA == clasifB)
+        return 0;
+
+    if (clasifA == 'N') // Nivel general
+        return -1;
+    else if (clasifA == 'I') // Items
+        return 1;
+
+    // clasifA == Capitulos
+
+    if (clasifB == 'N')
+        return 1;
+    else
+        return -1;
 }
-
-double calcularVarPorc(double indActual, double indPrevio) {
-    return (indActual/ indPrevio - 1) * 100;
-}
-
-// Resto del proyecto
 
 void reemplazarComaPorPunto(char *indice)
 {
@@ -290,7 +259,7 @@ void quitarAnteriorAlPrimerGuion(char *cadena)
 void mostrarRegistrosICC(RegistroICC *registros, int total)
 {
     printf("%-12s | %-60s | %-20s | %-15s\n", "Periodo", "Nivel", "Indice", "Clasificador");
-    printf("-------------------------------------------------------------------------------------------------------------------------\n");
+    printf("---------------------------------------------------------------------------------------------------------------------\n");
 
     for (int i = 0; i < total; i++)
     {
@@ -303,4 +272,69 @@ void mostrarRegistrosICC(RegistroICC *registros, int total)
                registros[i].valor,
                registros[i].clasificador);
     }
+}
+
+void probarVector(RegistroICC* registros, int total) {
+    Vector vec;
+    vectorCrear(&vec, sizeof(Fila));
+
+    Fila fila;
+
+    for (int i = 0; i < total; i++) {
+        fila.periodo = registros[i].periodo;
+        strcpy(fila.nivelGeneralAperturas, registros[i].nivelGeneralAperturas);
+        strcpy(fila.clasificador, registros[i].clasificador);
+        fila.indiceICC = registros[i].valor;
+
+        vectorInsertarAlFinal(&vec, &fila);
+    }
+
+    vectorRecorrer(&vec, calcularVarMensual, &vec);
+    vectorRecorrer(&vec, calcularVarInteranual, &vec);
+}
+
+void calcularVarMensual(void* elem, void* datos) {
+    Fila* fila = elem, filaPrev = *fila;
+    Vector* vec = datos;
+    int res;
+
+    filaPrev.periodo = fechaRestarMeses(&fila->periodo, 1);
+    res = vectorOrdBuscar(vec, &filaPrev, compararPorFecha);
+    if (res != 0) {
+        double porcentaje = calcularVarPorc(fila->indiceICC, filaPrev.indiceICC);
+        fila->varMensual = floor(porcentaje * 100) / 100;
+    }
+}
+
+void calcularVarInteranual(void* elem, void* datos) {
+    Fila* fila = elem, filaPrev = *fila;
+    Vector* vec = datos;
+    int res;
+
+    filaPrev.periodo = fechaRestarMeses(&fila->periodo, 12);
+    res = vectorOrdBuscar(vec, &filaPrev, compararPorFecha);
+    if (res != 0) {
+        double porcentaje = calcularVarPorc(fila->indiceICC, filaPrev.indiceICC);
+        fila->varMensual = floor(porcentaje * 100) / 100;
+    }
+}
+
+int compararPorFecha(const void* a, const void* b) {
+    const Fila* filaA = a;
+    const Fila* filaB = b;
+
+    int cmp = fechaComparar(&filaA->periodo, &filaB->periodo);
+    if (cmp != 0) {
+        return cmp;
+    }
+
+    if ((cmp = strcmp(filaA->clasificador, filaB->clasificador)) != 0) {
+        return cmp;
+    }
+
+    return strcmp(filaA->nivelGeneralAperturas, filaB->nivelGeneralAperturas);
+}
+
+double calcularVarPorc(double indActual, double indPrevio) {
+    return (indActual/ indPrevio - 1) * 100;
 }

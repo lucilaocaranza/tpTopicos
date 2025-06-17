@@ -41,6 +41,7 @@ int FechaCrearDesdeCadena(Fecha *fechaNueva, const char *fechaStr)
 
     return TODO_OK;
 }
+
 void FechaConvertirAGuiones(char *strDestino, Fecha *origen)
 {
     int dia = origen->dia;
@@ -138,6 +139,7 @@ Fecha fechaRestarMeses(const Fecha* f, int meses) {
     return fSumar;
 }
 
+// TODO: Unir con el de abajo
 int fechaComparar(const Fecha* fecha1, const Fecha* fecha2) {
     Fecha f1 = *fecha1, f2 = *fecha2;
     int cmp;
@@ -150,6 +152,19 @@ int fechaComparar(const Fecha* fecha1, const Fecha* fecha2) {
     }
 
     return f1.dia - f2.dia;
+}
+
+// TODO: Unir con el de arriba
+int FechaComparar(const Fecha* fechaA, const Fecha* fechaB)
+{
+    int cmp = fechaA->anio - fechaB->anio;
+    if (cmp != 0)
+        return cmp;
+
+    if ((cmp = fechaA->mes - fechaB->mes) != 0)
+        return cmp;
+
+    return fechaA->dia - fechaB->dia;
 }
 
 int min(int a, int b) {
