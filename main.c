@@ -104,13 +104,14 @@ int main(int argc, char *argv[])
     fclose(archCapitulos);
     fclose(archItems);
 
-    // 10 - Ordenar
     //qsort(registros, total, sizeof(RegistroICC), compararRegistros);
 
+    // 10 - Ordenar
     vectorOrdenar(&registros, QSORT, compararPorFecha);
 
     //mostrarRegistrosICC(registros, total);
 
+    // 11 y 12 - Calcular
     vectorRecorrer(&registros, calcularVarMensual, &registros);
     vectorRecorrer(&registros, calcularVarInteranual, &registros);
 /*
@@ -121,7 +122,7 @@ int main(int argc, char *argv[])
 
     vectorRecorrer(&registros, pasarAExportar, &vec);
 */
-    probarVector(&registros);
+    mostrarVector(&registros);
 
     return TODO_OK;
 }
@@ -296,23 +297,7 @@ void mostrarRegistrosICC(RegistroICC *registros, int total)
     }
 }
 
-void probarVector(Vector* registros) {
-    /*
-    Vector vec;
-    vectorCrear(&vec, sizeof(Fila));
-
-    RegistroICC fila;
-
-    for (int i = 0; i < total; i++) {
-        //fila = registros[i];
-        vectorInsertarAlFinal(&vec, &fila);
-    }
-
-    vectorOrdenar(&vec, QSORT, compararPorFecha);
-
-    vectorRecorrer(&vec, calcularVarMensual, &vec);
-    vectorRecorrer(&vec, calcularVarInteranual, &vec);
-*/
+void mostrarVector(Vector* registros) {
     printf("== Mostrar vector ==\n\n");
     printf("%-12s | %-60s | %-16s | %-15s | %-16s | %-16s\n", "Periodo", "Nivel", "Indice", "Clasificador", "var_mensual", "var_interanual");
     printf("------------------------------------------------------------------------------------------------------------------------------------------------------\n");
@@ -325,11 +310,18 @@ void calcularVarMensual(void* elem, void* datos) {
     Vector* vec = datos;
     int res;
 
+    printf("Valor: %d-%d-%d ; %s ; %s ; %f\n", fila->periodo.anio, fila->periodo.mes, fila->periodo.dia, fila->clasificador, fila->nivelGeneralAperturas, fila->indiceICC);
+
     filaPrev.periodo = fechaRestarMeses(&fila->periodo, 1);
     res = vectorOrdBuscar(vec, &filaPrev, compararPorFecha);
-    if (res != 0) {
+    if (res != -1) {
+        printf("Nuevo valor: %d-%d-%d ; %s ; %s ; %f\n\n", filaPrev.periodo.anio, filaPrev.periodo.mes, filaPrev.periodo.dia, filaPrev.clasificador, filaPrev.nivelGeneralAperturas, filaPrev.indiceICC);
+
         double porcentaje = calcularVarPorc(fila->indiceICC, filaPrev.indiceICC);
         fila->varMensual = floor(porcentaje * 100) / 100;
+    }
+    else {
+        printf("No nuevo valor\n\n");
     }
 }
 
@@ -340,7 +332,7 @@ void calcularVarInteranual(void* elem, void* datos) {
 
     filaPrev.periodo = fechaRestarMeses(&fila->periodo, 12);
     res = vectorOrdBuscar(vec, &filaPrev, compararPorFecha);
-    if (res != 0) {
+    if (res != -1) {
         double porcentaje = calcularVarPorc(fila->indiceICC, filaPrev.indiceICC);
         fila->varInteranual = floor(porcentaje * 100) / 100;
     }

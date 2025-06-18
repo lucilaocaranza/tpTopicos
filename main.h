@@ -47,7 +47,7 @@ void desencriptarArchItems(char *campo);
 void quitarAnteriorAlPrimerGuion(char *cadena);
 void mostrarRegistrosICC(RegistroICC *registros, int total);
 
-void probarVector(Vector* regs);
+void mostrarVector(Vector* regs);
 void calcularVarMensual(void* elem, void* datos);
 void calcularVarInteranual(void* elem, void* datos);
 int compararPorFecha(const void* a, const void* b);
