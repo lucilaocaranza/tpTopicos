@@ -12,8 +12,10 @@
 
 int main(int argc, char *argv[])
 {
-    RegistroICC registros[MAX_REGISTROS];
-    int total = 0;
+    Vector registros;
+    vectorCrear(&registros, sizeof(Fila));
+    //RegistroICC registros[MAX_REGISTROS];
+    //int total = 0;
 
     FILE *archCapitulos = fopen(argv[1], "r");
     FILE *archItems = fopen(argv[2], "r");
@@ -34,10 +36,13 @@ int main(int argc, char *argv[])
         char *periodo = strtok(registroData, ";\"");
         char *nivel = strtok(NULL, ";\"");
         char *indiceStr = strtok(NULL, ";\"\n");
+
+        Fila fila;
+
         // Campo fecha
         Fecha nuevaFecha;
         FechaCrearDesdeCadena(&nuevaFecha, periodo);
-        registros[total].periodo = nuevaFecha;
+        fila.periodo = nuevaFecha;
 
         // Campo nivel
         decodificar(nivel);
@@ -45,18 +50,18 @@ int main(int argc, char *argv[])
         primeraMayus(nivel);
 
         // Clasificador
-        clasificador(&registros[total], nivel);
+        clasificador(&fila, nivel);
 
         // Campo indice
         reemplazarComaPorPunto(indiceStr);
         double valorNum = strtod(indiceStr, NULL);
 
         // Se copia a la estructura de Registros
-        strcpy(registros[total].nivelGeneralAperturas, nivel);
-        strcpy(registros[total].tipoVariable, "indice_icc");
-        registros[total].valor = valorNum;
+        strcpy(fila.nivelGeneralAperturas, nivel);
+        //strcpy(fila.tipoVariable, "indice_icc");
+        fila.indiceICC = valorNum;
 
-        total++;
+        vectorInsertarAlFinal(&registros, &fila);
     }
 
     //////////Archivo 2/////////////////////////
@@ -67,10 +72,13 @@ int main(int argc, char *argv[])
         char *periodo = strtok(registroData, ";\"");
         char *nivel = strtok(NULL, ";\"");
         char *indiceStr = strtok(NULL, ";\"\n");
+
+        Fila fila;
+
         // Campo fecha
         Fecha nuevaFecha;
         FechaCrearDesdeCadena(&nuevaFecha, periodo);
-        registros[total].periodo = nuevaFecha;
+        fila.periodo = nuevaFecha;
 
         // Campo nivel
         desencriptarArchItems(nivel);
@@ -79,26 +87,42 @@ int main(int argc, char *argv[])
         primeraMayus(nivel);
 
         // Clasificador
-        clasificadorEnItem(&registros[total]);
+        clasificadorEnItem(&fila);
 
         // Campo indice
         reemplazarComaPorPunto(indiceStr);
         double valorNum = strtod(indiceStr, NULL);
 
         // Se copia a la estructura de Registros
-        strcpy(registros[total].nivelGeneralAperturas, nivel);
-        strcpy(registros[total].tipoVariable, "indice_icc");
-        registros[total].valor = valorNum;
+        strcpy(fila.nivelGeneralAperturas, nivel);
+        //strcpy(registros[total].tipoVariable, "indice_icc");
+        fila.indiceICC = valorNum;
 
-        total++;
+        vectorInsertarAlFinal(&registros, &fila);
     }
+
     fclose(archCapitulos);
     fclose(archItems);
 
-    // Ordenar
-    qsort(registros, total, sizeof(RegistroICC), compararRegistros);
+    //qsort(registros, total, sizeof(RegistroICC), compararRegistros);
 
-    mostrarRegistrosICC(registros, total);
+    // 10 - Ordenar
+    vectorOrdenar(&registros, QSORT, compararPorFecha);
+
+    //mostrarRegistrosICC(registros, total);
+
+    // 11 y 12 - Calcular
+    vectorRecorrer(&registros, calcularVarMensual, &registros);
+    vectorRecorrer(&registros, calcularVarInteranual, &registros);
+/*
+    Vector exportar;
+    vectorCrear(&vec, sizeof(RegistroICC));
+
+    RegistroICC fila;
+
+    vectorRecorrer(&registros, pasarAExportar, &vec);
+*/
+    mostrarVector(&registros);
 
     return TODO_OK;
 }
@@ -197,14 +221,14 @@ void decodificar(char *cadena)
         cadena++;
     }
 }
-void clasificador(RegistroICC *reg, char *campo)
+void clasificador(Fila *reg, char *campo)
 {
     if (strcmp(campo, "Nivel general") == 0)
         strcpy(reg->clasificador, "Nivel general");
     else
         strcpy(reg->clasificador, "Capitulos");
 }
-void clasificadorEnItem(RegistroICC *reg)
+void clasificadorEnItem(Fila *reg)
 {
     strcpy(reg->clasificador, "Items");
 }
@@ -254,6 +278,7 @@ void quitarAnteriorAlPrimerGuion(char *cadena)
     act++;
     strcpy(cadena, act);
 }
+
 void mostrarRegistrosICC(RegistroICC *registros, int total)
 {
     printf("%-12s | %-60s | %-20s | %-15s\n", "Periodo", "Nivel", "Indice", "Clasificador");
@@ -270,4 +295,93 @@ void mostrarRegistrosICC(RegistroICC *registros, int total)
                registros[i].valor,
                registros[i].clasificador);
     }
+}
+
+void mostrarVector(Vector* registros) {
+    printf("== Mostrar vector ==\n\n");
+    printf("%-12s | %-60s | %-16s | %-15s | %-16s | %-16s\n", "Periodo", "Nivel", "Indice", "Clasificador", "var_mensual", "var_interanual");
+    printf("------------------------------------------------------------------------------------------------------------------------------------------------------\n");
+
+    vectorRecorrer(registros, mostrarRegistroVector, registros);
+}
+
+void calcularVarMensual(void* elem, void* datos) {
+    Fila *fila = elem, filaPrev = *fila;
+    Vector* vec = datos;
+    int res;
+
+    printf("Valor: %d-%d-%d ; %s ; %s ; %f\n", fila->periodo.anio, fila->periodo.mes, fila->periodo.dia, fila->clasificador, fila->nivelGeneralAperturas, fila->indiceICC);
+
+    filaPrev.periodo = fechaRestarMeses(&fila->periodo, 1);
+    res = vectorOrdBuscar(vec, &filaPrev, compararPorFecha);
+    if (res != -1) {
+        printf("Nuevo valor: %d-%d-%d ; %s ; %s ; %f\n\n", filaPrev.periodo.anio, filaPrev.periodo.mes, filaPrev.periodo.dia, filaPrev.clasificador, filaPrev.nivelGeneralAperturas, filaPrev.indiceICC);
+
+        double porcentaje = calcularVarPorc(fila->indiceICC, filaPrev.indiceICC);
+        fila->varMensual = floor(porcentaje * 100) / 100;
+    }
+    else {
+        printf("No nuevo valor\n\n");
+    }
+}
+
+void calcularVarInteranual(void* elem, void* datos) {
+    Fila *fila = elem, filaPrev = *fila;
+    Vector* vec = datos;
+    int res;
+
+    filaPrev.periodo = fechaRestarMeses(&fila->periodo, 12);
+    res = vectorOrdBuscar(vec, &filaPrev, compararPorFecha);
+    if (res != -1) {
+        double porcentaje = calcularVarPorc(fila->indiceICC, filaPrev.indiceICC);
+        fila->varInteranual = floor(porcentaje * 100) / 100;
+    }
+}
+
+int compararPorFecha(const void* a, const void* b) {
+    const RegistroICC *filaA = a;
+    const RegistroICC *filaB = b;
+
+    int cmp = FechaComparar(&filaA->periodo, &filaB->periodo);
+    if (cmp != 0) {
+        return cmp;
+    }
+
+    char clasifA = *filaA->clasificador;
+    char clasifB = *filaB->clasificador;
+
+    if (clasifA != clasifB) {
+        if (clasifA == 'N') // Nivel general
+            return -1;
+        else if (clasifA == 'I') // Items
+            return 1;
+
+        // clasifA == Capitulos
+
+        if (clasifB == 'N')
+            return 1;
+        else
+            return -1;
+    }
+
+    return strcmp(filaA->nivelGeneralAperturas, filaB->nivelGeneralAperturas);
+}
+
+double calcularVarPorc(double indActual, double indPrevio) {
+    return (indActual/ indPrevio - 1) * 100;
+}
+
+void mostrarRegistroVector(void* elem, void* datos) {
+    Fila *registro = elem;
+
+    char fechaStr[11];
+    FechaConvertirAGuiones(fechaStr, &(registro->periodo));
+
+    printf("%-12s | %-60s | %-16f | %-15s | %-16f | %-16f\n",
+           fechaStr,
+           registro->nivelGeneralAperturas,
+           registro->indiceICC,
+           registro->clasificador,
+           registro->varMensual,
+           registro->varInteranual);
 }
