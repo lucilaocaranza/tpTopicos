@@ -14,7 +14,7 @@
 #define ARG_INDICE_ITEMS 2
 #define TODO_OK 0
 #define ERR_ARCHIVO 1
-#define MAX_REGISTROS 1000
+#define MAX_REGISTROS 2000
 
 // Estructura final para exportar los registros binarios
 typedef struct
@@ -48,10 +48,17 @@ void quitarAnteriorAlPrimerGuion(char *cadena);
 void mostrarRegistrosICC(RegistroICC *registros, int total);
 
 void mostrarVector(Vector* regs);
+void mostrarVectorFinal(Vector* regs);
 void calcularVarMensual(void* elem, void* datos);
 void calcularVarInteranual(void* elem, void* datos);
 int compararPorFecha(const void* a, const void* b);
 double calcularVarPorc(double indActual, double indPrevio);
 void mostrarRegistroVector(void* elem, void* datos);
+void mostrarRegistroVectorFinal(void* elem,void* datos);
+
+void cargarEstructuraRegistroIcc(void* vec,void* elem);
+void cargarEstructuraRegistroIccVarMen(void* vec,void* elem);
+void cargarEstructuraRegistroIccVarA(void* vec,void* elem);
+
 
 #endif // MAIN_H_INCLUDED
