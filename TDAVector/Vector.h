@@ -20,9 +20,7 @@
 #define AUMENTAR 1
 #define DISMINUIR 2
 
-#define BURBUJEO 1
 #define SELECCION 2
-#define INSERCION 3
 #define QSORT 4
 
 
