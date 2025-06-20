@@ -3,12 +3,12 @@
 
 #include "./TDAVector/Vector.h"
 #include "./TDAFecha/TDAFecha.h"
-#include "io.h"
-#include "procesamientoDeArchivo.h"
-#include "utils.h"
-#include "variaciones.h"
-#include "fila.h"
-#include "registroICC.h"
+#include "io/io.h"
+#include "procesamientoDeArchivo/procesamientoDeArchivo.h"
+#include "utils/utils.h"
+#include "variaciones/variaciones.h"
+#include "structs/fila.h"
+#include "structs/registroICC.h"
 
 
 
