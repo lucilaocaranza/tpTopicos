@@ -36,10 +36,32 @@
 		<Compiler>
 			<Add option="-Wall" />
 		</Compiler>
+		<Unit filename="comparators.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="comparators.h" />
+		<Unit filename="fila.h" />
+		<Unit filename="io.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="io.h" />
 		<Unit filename="main.c">
 			<Option compilerVar="CC" />
 		</Unit>
 		<Unit filename="main.h" />
+		<Unit filename="procesamientoDeArchivo.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="procesamientoDeArchivo.h" />
+		<Unit filename="registroICC.h" />
+		<Unit filename="utils.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="utils.h" />
+		<Unit filename="variaciones.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="variaciones.h" />
 		<Extensions>
 			<lib_finder disable_auto="1" />
 		</Extensions>

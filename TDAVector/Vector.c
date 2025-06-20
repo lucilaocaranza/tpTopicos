@@ -253,7 +253,7 @@ bool redimensionarVector(Vector* vector, int operacion)
         return false;
     }
 
-    printf("Redimensión de %lu, a %lu\n", vector->cap, nuevaCap);
+printf("Redimensión de %lu a %lu\n", (unsigned long)vector->cap, (unsigned long)nuevaCap);
 
     vector->vec = nVec;
     vector->cap = nuevaCap;
