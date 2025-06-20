@@ -173,16 +173,8 @@ void vectorOrdenar(Vector* vector, int metodo, Cmp cmp)
 {
     switch(metodo)
     {
-        case BURBUJEO:
-            // ordenarBurbujeo(vector);
-            break;
-
         case SELECCION:
             ordenarSeleccion(vector, cmp);
-            break;
-
-        case INSERCION:
-            // ordenarInsercion(vector);
             break;
 
         case QSORT:
