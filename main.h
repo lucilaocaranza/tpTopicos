@@ -19,7 +19,7 @@
 // Estructura final para exportar los registros binarios
 typedef struct
 {
-    Fecha periodo;
+    char periodo[11];
     char clasificador[20]; // "Nivel general", "Capitulos", "Items"
     char nivelGeneralAperturas[50];
     char tipoVariable[20]; // "indice_icc", "var_mensual", "var_interanual"
