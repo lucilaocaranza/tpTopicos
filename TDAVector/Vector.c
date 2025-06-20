@@ -31,7 +31,7 @@ bool vectorCrear(Vector* vector, size_t tamElem)
     return true;
 }
 
-// Copiado de profe: Reescribir
+
 int vectorCrearDeArchivo(Vector* vector, size_t tamElem, const char* nomArch) {
     FILE* arch = fopen(nomArch, "rb");
     if (!arch) {
@@ -192,45 +192,6 @@ void vectorOrdenar(Vector* vector, int metodo, Cmp cmp)
 }
 
 
-// bool vectorOrdEliminar(Vector* vector, int elem)
-// {
-//     int posElim = vectorOrdBuscar(vector, elem);
-
-//     if(posElim == -1)
-//     {
-//         return false;
-//     }
-
-//     vectorEliminarDePos(vector, posElim);
-
-//     return true;
-// }
-
-
-// bool vectorEliminarDePos(Vector* vector, int pos)
-// {
-//     if(pos >= vector->ce)
-//     {
-//         return false;
-//     }
-
-//     int* ult = vector->vec + vector->ce - 1;
-
-//     for(int* i = vector->vec + pos; i < ult; i++)
-//     {
-//         *i = *(i + 1);
-//     }
-
-//     vector->ce--;
-
-//     if((float)vector->ce / vector->cap <= FACTOR_OCUP)
-//     {
-//         redimensionarVector(vector, DISMINUIR);
-//     }
-
-//     return true;
-// }
-
 
 void vectorDestruir(Vector* vector)
 {
@@ -252,8 +213,6 @@ bool redimensionarVector(Vector* vector, int operacion)
     {
         return false;
     }
-
-printf("Redimensión de %lu a %lu\n", (unsigned long)vector->cap, (unsigned long)nuevaCap);
 
     vector->vec = nVec;
     vector->cap = nuevaCap;
@@ -289,20 +248,6 @@ void vectorRecorrer(const Vector* vector, Accion accion, void* datos) {
 }
 
 
-// void ordenarBurbujeo(Vector* vector)
-// {
-//     int* ult = vector->vec + vector->ce - 1;
-//     for(int i = 1, *limJ = ult - 1; i < vector->ce; i++, limJ--)
-//     {
-//         for(int* j = vector->vec; j <= limJ; j++)
-//         {
-//             if(*j > *(j + 1))
-//             {
-//                 intercambiar(j, j + 1);
-//             }
-//         }
-//     }
-// }
 
 
 void ordenarSeleccion(Vector* vector, Cmp cmp)
@@ -332,23 +277,6 @@ void* buscarMenor(void* ini, void* fin, Cmp cmp, size_t tamElem)
 }
 
 
-// void ordenarInsercion(Vector* vector)
-// {
-//     int* ult = vector->vec + vector->ce - 1;
-//     int elemAIns;
-//     for(int* i = vector->vec + 1; i <= ult; i++)
-//     {
-//         elemAIns = *i;
-//         int* j = i - 1;
-//         while(j >= vector->vec && elemAIns < *j)
-//         {
-//             *(j + 1) = *j;
-//             j--;
-//         }
-
-//         *(j + 1) = elemAIns;
-//     }
-// }
 
 
 void intercambiar(void* a, void* b, size_t tamElem)
