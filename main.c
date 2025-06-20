@@ -128,9 +128,8 @@ int main(int argc, char *argv[])
     Vector vEstrFinal;
     vectorCrear(&vEstrFinal,sizeof(RegistroICC));
 
-    vectorRecorrer(&registros,cargarEstructuraRegistroIcc,&vEstrFinal);
-    vectorRecorrer(&registros,cargarEstructuraRegistroIccVarMen,&vEstrFinal);
-    vectorRecorrer(&registros,cargarEstructuraRegistroIccVarA,&vEstrFinal);
+    vectorRecorrer(&registros, cargarEstructuraRegistroIcc, &vEstrFinal);
+    vectorOrdenar(&vEstrFinal, QSORT, compararRegistros);
 
     mostrarVectorFinal(&vEstrFinal);
 
@@ -145,24 +144,53 @@ int compararRegistros(const void *a, const void *b)
     const RegistroICC *regA = a;
     const RegistroICC *regB = b;
 
-    int cmp = FechaComparar(&regA->periodo, &regB->periodo);
+    Fecha fechaA, fechaB;
+
+    fechaDeCadena(&fechaA, regA->periodo);
+    fechaDeCadena(&fechaB, regB->periodo);
+
+    // Comparar por periodo
+    int cmp = FechaComparar(&fechaA, &fechaB);
     if (cmp)
         return cmp;
+
+    // Si son iguales, comparar por clasificador
 
     char clasifA = *regA->clasificador;
     char clasifB = *regB->clasificador;
 
-    if (clasifA == clasifB)
+    // Si difiere en clasificaci�n, retornar ac�
+    if (clasifA != clasifB) {
+        if (clasifA == 'N') // A = Nivel general -> B es menor
+            return -1;
+        else if (clasifA == 'I') // A = Items -> B es mayor
+            return 1;
+
+        // clasifA == Capitulos (el del medio)
+
+        if (clasifB == 'N') // B = Nivel general -> B > A
+            return 1;
+        else
+            return -1; // B = Items -> A > B
+    }
+
+    // IS la clasificaci�n es igual, comparar por tipo_variable
+    // Ordenar por tipo_var
+
+    char* tipoA = regA->tipoVariable;
+    char* tipoB = regB->tipoVariable;
+
+    if (strcmp(tipoA, tipoB) == 0) // Son iguales
         return 0;
 
-    if (clasifA == 'N') // Nivel general
+    if (strcmp(tipoA, "indice_icc") == 0) // indice_icc
         return -1;
-    else if (clasifA == 'I') // Items
+    else if (strcmp(tipoA, "var_interanual") == 0) // var_interanual
         return 1;
 
-    // clasifA == Capitulos
+    // clasifA == var_mensual
 
-    if (clasifB == 'N')
+    if (strcmp(tipoB, "indice_icc") == 0)
         return 1;
     else
         return -1;
@@ -178,7 +206,8 @@ void reemplazarComaPorPunto(char *indice)
         }
         indice++;
     }
-};
+}
+
 void guionAespacio(char *cadena)
 {
     while (*cadena != '\0')
@@ -299,11 +328,8 @@ void mostrarRegistrosICC(RegistroICC *registros, int total)
 
     for (int i = 0; i < total; i++)
     {
-        char fechaStr[11];
-        FechaConvertirAGuiones(fechaStr, &(registros[i].periodo));
-
         printf("%-12s | %-60s | %-20f | %-15s\n",
-               fechaStr,
+               registros[i].periodo,
                registros[i].nivelGeneralAperturas,
                registros[i].valor,
                registros[i].clasificador);
@@ -318,25 +344,25 @@ void mostrarVector(Vector* registros)
 
     vectorRecorrer(registros, mostrarRegistroVector, registros);
 }
+
 void mostrarVectorFinal(Vector* regs)
 {
-printf("== Mostrar vector Final ==\n\n");
-    printf("%-12s | %-12s | %-22s | %-13s | %-5s\n", "Periodo", "Clasificador", "Nivel General Aperuras", "Tipo_variable", "Valor");
+    printf("== Mostrar vector Final ==\n\n");
+    printf("%-12s | %-16s | %-14s | %-60s | %-16s\n", "Periodo", "Clasificador", "Tipo_variable", "Nivel General Aperuras", "Valor");
     printf("------------------------------------------------------------------------------------------------------------------------------------------------------\n");
+
     vectorRecorrer(regs,mostrarRegistroVectorFinal,regs);
 }
+
 void mostrarRegistroVectorFinal(void* elem,void* datos)
 {
     RegistroICC *registro = elem;
 
-    char fechaStr[11];
-    FechaConvertirAGuiones(fechaStr, &(registro->periodo));
-
-    printf("%-12s | %-16s | %-60s| %-13s | %-16f\n",
-           fechaStr,
+    printf("%-12s | %-16s | %-14s | %-60s | %-16f\n",
+           registro->periodo,
            registro->clasificador,
-           registro->nivelGeneralAperturas,
            registro->tipoVariable,
+           registro->nivelGeneralAperturas,
            registro->valor);
 }
 void calcularVarMensual(void* elem, void* datos)
@@ -344,22 +370,16 @@ void calcularVarMensual(void* elem, void* datos)
     Fila *fila = elem, filaPrev = *fila;
     Vector* vec = datos;
     int res;
-
-    printf("Valor: %d-%d-%d ; %s ; %s ; %f\n", fila->periodo.anio, fila->periodo.mes, fila->periodo.dia, fila->clasificador, fila->nivelGeneralAperturas, fila->indiceICC);
+    double porcentaje;
 
     filaPrev.periodo = fechaRestarMeses(&fila->periodo, 1);
     res = vectorOrdBuscar(vec, &filaPrev, compararPorFecha);
     if (res != -1)
-    {
-        printf("Nuevo valor: %d-%d-%d ; %s ; %s ; %f\n\n", filaPrev.periodo.anio, filaPrev.periodo.mes, filaPrev.periodo.dia, filaPrev.clasificador, filaPrev.nivelGeneralAperturas, filaPrev.indiceICC);
-
-        double porcentaje = calcularVarPorc(fila->indiceICC, filaPrev.indiceICC);
-        fila->varMensual = floor(porcentaje * 100) / 100;
-    }
+        porcentaje = calcularVarPorc(fila->indiceICC, filaPrev.indiceICC);
     else
-    {
-        printf("No nuevo valor\n\n");
-    }
+        porcentaje = -101;
+
+    fila->varMensual = floor(porcentaje * 100) / 100;
 }
 
 void calcularVarInteranual(void* elem, void* datos)
@@ -367,20 +387,22 @@ void calcularVarInteranual(void* elem, void* datos)
     Fila *fila = elem, filaPrev = *fila;
     Vector* vec = datos;
     int res;
+    double porcentaje;
 
     filaPrev.periodo = fechaRestarMeses(&fila->periodo, 12);
     res = vectorOrdBuscar(vec, &filaPrev, compararPorFecha);
     if (res != -1)
-    {
-        double porcentaje = calcularVarPorc(fila->indiceICC, filaPrev.indiceICC);
-        fila->varInteranual = floor(porcentaje * 100) / 100;
-    }
+        porcentaje = calcularVarPorc(fila->indiceICC, filaPrev.indiceICC);
+    else
+        porcentaje = -101;
+
+    fila->varInteranual = floor(porcentaje * 100) / 100;
 }
 
 int compararPorFecha(const void* a, const void* b)
 {
-    const RegistroICC *filaA = a;
-    const RegistroICC *filaB = b;
+    const Fila *filaA = a;
+    const Fila *filaB = b;
 
     int cmp = FechaComparar(&filaA->periodo, &filaB->periodo);
     if (cmp != 0)
@@ -418,11 +440,11 @@ void mostrarRegistroVector(void* elem, void* datos)
 {
     Fila *registro = elem;
 
-    char fechaStr[11];
-    FechaConvertirAGuiones(fechaStr, &(registro->periodo));
+    char periodo[11];
+    FechaConvertirAGuiones(periodo, &registro->periodo);
 
     printf("%-12s | %-60s | %-16f | %-15s | %-16f | %-16f\n",
-           fechaStr,
+           periodo,
            registro->nivelGeneralAperturas,
            registro->indiceICC,
            registro->clasificador,
@@ -436,46 +458,23 @@ void cargarEstructuraRegistroIcc(void* vec,void* elem)
     Fila* v = (Fila*) vec;
     RegistroICC  reg;
 
-    reg.periodo.anio= v->periodo.anio;
-    reg.periodo.mes= v->periodo.mes;
-    reg.periodo.dia= v->periodo.dia;
+    FechaConvertirAGuiones(reg.periodo, &v->periodo);
     strcpy(reg.clasificador,v->clasificador);
     strcpy(reg.nivelGeneralAperturas, v->nivelGeneralAperturas);
-    strcpy(reg.tipoVariable,"IndiceICC");
+
+    strcpy(reg.tipoVariable,"indice_icc");
     reg.valor = v->indiceICC;
     vectorInsertarAlFinal(vFinal,&reg);
 
-    // total++;
-}
-void cargarEstructuraRegistroIccVarMen(void* vec,void* elem)
-{
-    Vector *vFinal= (Vector*)elem;
-    Fila *v = (Fila*)vec;
-    RegistroICC reg;
+    if (v->varMensual > -101) {
+        strcpy(reg.tipoVariable,"var_mensual");
+        reg.valor = v->varMensual;
+        vectorInsertarAlFinal(vFinal,&reg);
+    }
 
-    reg.periodo.anio= v->periodo.anio;
-    reg.periodo.mes= v->periodo.mes;
-    reg.periodo.dia= v->periodo.dia;
-    strcpy(reg.clasificador,v->clasificador);
-    strcpy(reg.nivelGeneralAperturas, v->nivelGeneralAperturas);
-    strcpy(reg.tipoVariable,"Var_Mensual");
-    reg.valor = v->varMensual;
-
-    vectorInsertarAlFinal(vFinal,&reg);
-
-}
-void cargarEstructuraRegistroIccVarA(void* vec,void* elem)
-{
-    Vector *vFinal = (Vector*)elem;
-    Fila *v =(Fila*)vec;
-    RegistroICC reg;
-
-    reg.periodo.anio= v->periodo.anio;
-    reg.periodo.mes= v->periodo.mes;
-    reg.periodo.dia= v->periodo.dia;
-    strcpy(reg.clasificador,v->clasificador);
-    strcpy(reg.nivelGeneralAperturas, v->nivelGeneralAperturas);
-    strcpy(reg.tipoVariable,"Var_Anual");
-    reg.valor = v->varInteranual;
-    vectorInsertarAlFinal(vFinal,&reg);
+    if (v->varInteranual > -101) {
+        strcpy(reg.tipoVariable,"var_interanual");
+        reg.valor = v->varInteranual;
+        vectorInsertarAlFinal(vFinal,&reg);
+    }
 }

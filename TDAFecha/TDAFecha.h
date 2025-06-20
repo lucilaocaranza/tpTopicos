@@ -28,7 +28,6 @@ bool esFechaValida(int d, int m, int a);
 int cantDiasMes(int m, int a);
 bool esBisiesto(int a);
 Fecha fechaRestarMeses(const Fecha*, int meses);
-int fechaComparar(const Fecha* f1, const Fecha* f2);
 int FechaComparar(const Fecha* fechaA, const Fecha* fechaB);
 
 #endif // TDAFECHA_H_INCLUDED
