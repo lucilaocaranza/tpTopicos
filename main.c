@@ -206,7 +206,8 @@ void reemplazarComaPorPunto(char *indice)
         }
         indice++;
     }
-};
+}
+
 void guionAespacio(char *cadena)
 {
     while (*cadena != '\0')
@@ -369,14 +370,16 @@ void calcularVarMensual(void* elem, void* datos)
     Fila *fila = elem, filaPrev = *fila;
     Vector* vec = datos;
     int res;
+    double porcentaje;
 
     filaPrev.periodo = fechaRestarMeses(&fila->periodo, 1);
     res = vectorOrdBuscar(vec, &filaPrev, compararPorFecha);
     if (res != -1)
-    {
-        double porcentaje = calcularVarPorc(fila->indiceICC, filaPrev.indiceICC);
-        fila->varMensual = floor(porcentaje * 100) / 100;
-    }
+        porcentaje = calcularVarPorc(fila->indiceICC, filaPrev.indiceICC);
+    else
+        porcentaje = -101;
+
+    fila->varMensual = floor(porcentaje * 100) / 100;
 }
 
 void calcularVarInteranual(void* elem, void* datos)
@@ -384,14 +387,16 @@ void calcularVarInteranual(void* elem, void* datos)
     Fila *fila = elem, filaPrev = *fila;
     Vector* vec = datos;
     int res;
+    double porcentaje;
 
     filaPrev.periodo = fechaRestarMeses(&fila->periodo, 12);
     res = vectorOrdBuscar(vec, &filaPrev, compararPorFecha);
     if (res != -1)
-    {
-        double porcentaje = calcularVarPorc(fila->indiceICC, filaPrev.indiceICC);
-        fila->varInteranual = floor(porcentaje * 100) / 100;
-    }
+        porcentaje = calcularVarPorc(fila->indiceICC, filaPrev.indiceICC);
+    else
+        porcentaje = -101;
+
+    fila->varInteranual = floor(porcentaje * 100) / 100;
 }
 
 int compararPorFecha(const void* a, const void* b)
@@ -461,13 +466,15 @@ void cargarEstructuraRegistroIcc(void* vec,void* elem)
     reg.valor = v->indiceICC;
     vectorInsertarAlFinal(vFinal,&reg);
 
-    strcpy(reg.tipoVariable,"var_mensual");
-    reg.valor = v->indiceICC;
-    vectorInsertarAlFinal(vFinal,&reg);
+    if (v->varMensual > -101) {
+        strcpy(reg.tipoVariable,"var_mensual");
+        reg.valor = v->varMensual;
+        vectorInsertarAlFinal(vFinal,&reg);
+    }
 
-    strcpy(reg.tipoVariable,"var_interanual");
-    reg.valor = v->indiceICC;
-    vectorInsertarAlFinal(vFinal,&reg);
-
-    // total++;
+    if (v->varInteranual > -101) {
+        strcpy(reg.tipoVariable,"var_interanual");
+        reg.valor = v->varInteranual;
+        vectorInsertarAlFinal(vFinal,&reg);
+    }
 }
