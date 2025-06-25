@@ -1,46 +1,47 @@
 #include "io.h"
 
-void mostrarVector(Vector *registros)
+void mostrarVectorInicial(Vector *registros, const char *titulo)
 {
-    printf("== Mostrar vector ==\n\n");
-    printf("%-12s | %-60s | %-16s | %-15s | %-16s | %-16s\n", "Periodo", "Nivel", "Indice", "Clasificador", "var_mensual", "var_interanual");
-    printf("------------------------------------------------------------------------------------------------------------------------------------------------------\n");
+    printf("\n== %s ==\n\n", titulo);
+    printf("%-10s | %-42s | %-12s | %-14s | %-12s | %-14s\n", "Periodo", "Nivel", "Indice", "Clasificador", "var_mensual", "var_interanual");
+    printf("------------------------------------------------------------------------------------------------------------------------\n");
 
-    vectorRecorrer(registros, mostrarRegistroVector, registros);
+    vectorRecorrer(registros, mostrarRegistroVecInicial, registros);
 }
 
-void mostrarVectorFinal(Vector *regs)
+void mostrarVectorFinal(Vector *regs, const char *titulo)
 {
-    printf("== Mostrar vector Final ==\n\n");
-    printf("%-12s | %-16s | %-14s | %-60s | %-16s\n", "Periodo", "Clasificador", "Tipo_variable", "Nivel General Aperuras", "Valor");
-    printf("------------------------------------------------------------------------------------------------------------------------------------------------------\n");
+    printf("\n== %s ==\n\n", titulo);
+    printf("%-10s | %-14s | %-50s | %-10s | %-16s\n", "Periodo", "Clasificador", "Nivel General Aperuras", "Tipo_variable", "Valor");
+    printf("----------------------------------------------------------------------------------------------------------------\n");
 
-    vectorRecorrer(regs, mostrarRegistroVectorFinal, regs);
-}
-void mostrarRegistroVectorFinal(void *elem, void *datos)
-{
-    RegistroICC *registro = elem;
-
-    printf("%-12s | %-16s | %-14s | %-60s | %-16f\n",
-           registro->periodo,
-           registro->clasificador,
-           registro->tipoVariable,
-           registro->nivelGeneralAperturas,
-           registro->valor);
+    vectorRecorrer(regs, mostrarRegistroVecFinal, regs);
 }
 
-void mostrarRegistroVector(void *elem, void *datos)
+void mostrarRegistroVecInicial(void *elem, void *datos)
 {
     Fila *registro = elem;
-
     char periodo[11];
+
     FechaConvertirAGuiones(periodo, &registro->periodo);
 
-    printf("%-12s | %-60s | %-16f | %-15s | %-16f | %-16f\n",
+    printf("%-10s | %-42s | %-12f | %-14s | %-12f | %-14f\n",
            periodo,
            registro->nivelGeneralAperturas,
            registro->indiceICC,
            registro->clasificador,
            registro->varMensual,
            registro->varInteranual);
+}
+
+void mostrarRegistroVecFinal(void *elem, void *datos)
+{
+    RegistroICC *registro = elem;
+
+    printf("%-10s | %-14s | %-50s | %-14s | %-10s\n",
+           registro->periodo,
+           registro->clasificador,
+           registro->nivelGeneralAperturas,
+           registro->tipoVariable,
+           registro->valor);
 }

@@ -3,6 +3,7 @@ int compararPorFechayClasificador(const void *a, const void *b)
 {
     const Fila *filaA = a;
     const Fila *filaB = b;
+    char clasifA, clasifB;
 
     int cmp = FechaComparar(&filaA->periodo, &filaB->periodo);
     if (cmp != 0)
@@ -10,14 +11,14 @@ int compararPorFechayClasificador(const void *a, const void *b)
         return cmp;
     }
 
-    char clasifA = *filaA->clasificador;
-    char clasifB = *filaB->clasificador;
+    clasifA = *filaA->clasificador;
+    clasifB = *filaB->clasificador;
 
     if (clasifA != clasifB)
     {
         if (clasifA == 'N') // Nivel general
             return -1;
-        else if (clasifA == 'I') // Items
+        else if (clasifA == 'Í') // Items
             return 1;
 
         // clasifA == Capitulos
@@ -33,30 +34,33 @@ int compararPorFechayClasificador(const void *a, const void *b)
 
 int compararRegistros(const void *a, const void *b)
 {
+    Fecha fechaA, fechaB;
+    char clasifA, clasifB;
+    const char *tipoA, *tipoB;
+    int cmp;
+
     const RegistroICC *regA = a;
     const RegistroICC *regB = b;
-
-    Fecha fechaA, fechaB;
 
     fechaDeCadena(&fechaA, regA->periodo);
     fechaDeCadena(&fechaB, regB->periodo);
 
     // Comparar por periodo
-    int cmp = FechaComparar(&fechaA, &fechaB);
+    cmp = FechaComparar(&fechaA, &fechaB);
     if (cmp)
         return cmp;
 
     // Si son iguales, comparar por clasificador
 
-    char clasifA = *regA->clasificador;
-    char clasifB = *regB->clasificador;
+    clasifA = *regA->clasificador;
+    clasifB = *regB->clasificador;
 
     // Si difiere en clasificacion, retornar aca
     if (clasifA != clasifB)
     {
         if (clasifA == 'N') // A = Nivel general -> B es menor
             return -1;
-        else if (clasifA == 'I') // A = Items -> B es mayor
+        else if (clasifA == 'Í') // A = Items -> B es mayor
             return 1;
 
         // clasifA == Capitulos (el del medio)
@@ -70,8 +74,8 @@ int compararRegistros(const void *a, const void *b)
     // IS la clasificacion es igual, comparar por tipo_variable
     // Ordenar por tipo_var
 
-    const char *tipoA = regA->tipoVariable;
-    const char *tipoB = regB->tipoVariable;
+    tipoA = regA->tipoVariable;
+    tipoB = regB->tipoVariable;
 
     if (strcmp(tipoA, tipoB) == 0) // Son iguales
         return 0;

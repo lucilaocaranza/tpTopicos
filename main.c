@@ -4,11 +4,20 @@
 
 int main(int argc, char *argv[])
 {
-    Vector registros;
+    Vector registros, vEstrFinal;
+    FILE *archCapitulos, *archItems;
+    Fila fila;
+
+    char *periodo, *nivel, *indiceStr;
+    char registroData[256];
+    double valorNum;
+
+    system("chcp 1252 > nul");
+
     vectorCrear(&registros, sizeof(Fila));
 
-    FILE *archCapitulos = fopen(argv[1], "r");
-    FILE *archItems = fopen(argv[2], "r");
+    archCapitulos = fopen(argv[ARG_ARCH_CAPITULOS], "r");
+    archItems = fopen(argv[ARG_ARCH_ITEMS], "r");
 
     if (!archCapitulos || !archItems)
     {
@@ -16,18 +25,15 @@ int main(int argc, char *argv[])
         return ERR_ARCHIVO;
     }
 
-    char registroData[256];
 
     //////////////////// Archivo 1///////////////////////////////////////////
 
     fgets(registroData, sizeof(registroData), archCapitulos); // Salto la cabecera
     while (fgets(registroData, sizeof(registroData), archCapitulos))
     {
-        char *periodo = strtok(registroData, ";\"");
-        char *nivel = strtok(NULL, ";\"");
-        char *indiceStr = strtok(NULL, ";\"\n");
-
-        Fila fila;
+        periodo = strtok(registroData, ";\"");
+        nivel = strtok(NULL, ";\"");
+        indiceStr = strtok(NULL, ";\"\n");
 
         // Campo fecha
         Fecha nuevaFecha;
@@ -44,7 +50,7 @@ int main(int argc, char *argv[])
 
         // Campo indice
         reemplazarComaPorPunto(indiceStr);
-        double valorNum = strtod(indiceStr, NULL);
+        valorNum = strtod(indiceStr, NULL);
 
         // Se copia a la estructura de Registros
         strcpy(fila.nivelGeneralAperturas, nivel);
@@ -58,11 +64,9 @@ int main(int argc, char *argv[])
     fgets(registroData, sizeof(registroData), archItems); // Salto la cabecera
     while (fgets(registroData, sizeof(registroData), archItems))
     {
-        char *periodo = strtok(registroData, ";\"");
-        char *nivel = strtok(NULL, ";\"");
-        char *indiceStr = strtok(NULL, ";\"\n");
-
-        Fila fila;
+        periodo = strtok(registroData, ";\"");
+        nivel = strtok(NULL, ";\"");
+        indiceStr = strtok(NULL, ";\"\n");
 
         // Campo fecha
         Fecha nuevaFecha;
@@ -80,7 +84,7 @@ int main(int argc, char *argv[])
 
         // Campo indice
         reemplazarComaPorPunto(indiceStr);
-        double valorNum = strtod(indiceStr, NULL);
+        valorNum = strtod(indiceStr, NULL);
 
         // Se copia a la estructura de Registros
         strcpy(fila.nivelGeneralAperturas, nivel);
@@ -99,17 +103,25 @@ int main(int argc, char *argv[])
     vectorRecorrer(&registros, calcularVarMensual, &registros);
     vectorRecorrer(&registros, calcularVarInteranual, &registros);
 
-    mostrarVector(&registros);
+    //mostrarVectorInicial(&registros, "Vector inicial ordenado (hasta p. 10)");
 
-    Vector vEstrFinal;
+    // Final - Reorganizar, reordenar
     vectorCrear(&vEstrFinal, sizeof(RegistroICC));
 
     vectorRecorrer(&registros, cargarEstructuraRegistroIcc, &vEstrFinal);
+    vectorDestruir(&registros);
+
     vectorOrdenar(&vEstrFinal, QSORT, compararRegistros);
 
-    mostrarVectorFinal(&vEstrFinal);
+    //mostrarVectorFinal(&vEstrFinal, "Vector final exportado");
 
-    vectorGrabar(&vEstrFinal, argv[3]);
+    // Final - Guardar
+    vectorGrabar(&vEstrFinal, argv[ARG_ARCH_BIN]);
+    vectorDestruir(&vEstrFinal);
+
+    // Releer
+    vectorCrearDeArchivo(&vEstrFinal, sizeof(RegistroICC), argv[ARG_ARCH_BIN]);
+    mostrarVectorFinal(&vEstrFinal, "Vector leído de binario");
 
     return TODO_OK;
 }

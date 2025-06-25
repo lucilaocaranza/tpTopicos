@@ -10,6 +10,8 @@
 #include "structs/fila.h"
 #include "structs/registroICC.h"
 
-
+#define ARG_ARCH_CAPITULOS 1
+#define ARG_ARCH_ITEMS 2
+#define ARG_ARCH_BIN 3
 
 #endif // MAIN_H_INCLUDED
