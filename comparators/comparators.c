@@ -18,7 +18,7 @@ int compararPorFechayClasificador(const void *a, const void *b)
     {
         if (clasifA == 'N') // Nivel general
             return -1;
-        else if (clasifA == 'I') // Items
+        else if (clasifA == 'Í') // Items
             return 1;
 
         // clasifA == Capitulos
@@ -35,7 +35,7 @@ int compararPorFechayClasificador(const void *a, const void *b)
 int compararRegistros(const void *a, const void *b)
 {
     Fecha fechaA, fechaB;
-    char clasiA, clasifB;
+    char clasifA, clasifB;
     const char *tipoA, *tipoB;
     int cmp;
 
@@ -60,7 +60,7 @@ int compararRegistros(const void *a, const void *b)
     {
         if (clasifA == 'N') // A = Nivel general -> B es menor
             return -1;
-        else if (clasifA == 'I') // A = Items -> B es mayor
+        else if (clasifA == 'Í') // A = Items -> B es mayor
             return 1;
 
         // clasifA == Capitulos (el del medio)

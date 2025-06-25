@@ -12,6 +12,8 @@ int main(int argc, char *argv[])
     char registroData[256];
     double valorNum;
 
+    system("chcp 1252 > nul");
+
     vectorCrear(&registros, sizeof(Fila));
 
     archCapitulos = fopen(argv[ARG_ARCH_CAPITULOS], "r");
@@ -101,7 +103,7 @@ int main(int argc, char *argv[])
     vectorRecorrer(&registros, calcularVarMensual, &registros);
     vectorRecorrer(&registros, calcularVarInteranual, &registros);
 
-    mostrarVector(&registros);
+    //mostrarVectorInicial(&registros, "Vector inicial ordenado (hasta p. 10)");
 
     // Final - Reorganizar, reordenar
     vectorCrear(&vEstrFinal, sizeof(RegistroICC));
@@ -111,7 +113,7 @@ int main(int argc, char *argv[])
 
     vectorOrdenar(&vEstrFinal, QSORT, compararRegistros);
 
-    mostrarVectorFinal(&vEstrFinal);
+    //mostrarVectorFinal(&vEstrFinal, "Vector final exportado");
 
     // Final - Guardar
     vectorGrabar(&vEstrFinal, argv[ARG_ARCH_BIN]);
@@ -119,7 +121,7 @@ int main(int argc, char *argv[])
 
     // Releer
     vectorCrearDeArchivo(&vEstrFinal, sizeof(RegistroICC), argv[ARG_ARCH_BIN]);
-    mostrarVectorFinal(&vEstrFinal);
+    mostrarVectorFinal(&vEstrFinal, "Vector leído de binario");
 
     return TODO_OK;
 }

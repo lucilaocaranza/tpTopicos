@@ -24,11 +24,11 @@ void clasificador(Fila *reg, char *campo)
     if (strcmp(campo, "Nivel general") == 0)
         strcpy(reg->clasificador, "Nivel general");
     else
-        strcpy(reg->clasificador, "Capitulos");
+        strcpy(reg->clasificador, "Capítulos");
 }
 void clasificadorEnItem(Fila *reg)
 {
-    strcpy(reg->clasificador, "Items");
+    strcpy(reg->clasificador, "Ítems");
 }
 void desencriptarArchItems(char *campo)
 {
