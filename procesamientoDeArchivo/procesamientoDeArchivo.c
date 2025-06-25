@@ -77,25 +77,34 @@ void cargarEstructuraRegistroIcc(void *vec, void *elem)
     Fila *v = (Fila *)vec;
     RegistroICC reg;
 
+    // Pasar fecha, clasificador y nivel general aperturas
     FechaConvertirAGuiones(reg.periodo, &v->periodo);
     strcpy(reg.clasificador, v->clasificador);
     strcpy(reg.nivelGeneralAperturas, v->nivelGeneralAperturas);
 
+    // Pasar indice_icc como string
     strcpy(reg.tipoVariable, "indice_icc");
-    reg.valor = v->indiceICC;
+    sprintf(reg.valor, "%-10f", v->indiceICC);
+    *(reg.valor + 10) = '\0';
     vectorInsertarAlFinal(vFinal, &reg);
 
-    if (v->varMensual > -101)
-    {
-        strcpy(reg.tipoVariable, "var_mensual");
-        reg.valor = v->varMensual;
-        vectorInsertarAlFinal(vFinal, &reg);
-    }
+    strcpy(reg.tipoVariable, "var_mensual");
 
+    // Pasar var_mensual según si es NA o no
+    if (v->varMensual > -101)
+        sprintf(reg.valor, "%-.2f", v->varMensual);
+    else
+        strcpy(reg.valor, "NA");
+
+    vectorInsertarAlFinal(vFinal, &reg);
+
+    strcpy(reg.tipoVariable, "var_interanual");
+
+    // Pasar var_interanual según si es NA o no
     if (v->varInteranual > -101)
-    {
-        strcpy(reg.tipoVariable, "var_interanual");
-        reg.valor = v->varInteranual;
-        vectorInsertarAlFinal(vFinal, &reg);
-    }
+        sprintf(reg.valor, "%-.2f", v->varInteranual);
+    else
+        strcpy(reg.valor, "NA");
+
+    vectorInsertarAlFinal(vFinal, &reg);
 }

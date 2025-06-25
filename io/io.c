@@ -12,7 +12,7 @@ void mostrarVectorInicial(Vector *registros, const char *titulo)
 void mostrarVectorFinal(Vector *regs, const char *titulo)
 {
     printf("\n== %s ==\n\n", titulo);
-    printf("%-10s | %-14s | %-50s | %-14s | %-16s\n", "Periodo", "Clasificador", "Nivel General Aperuras", "Tipo_variable", "Valor");
+    printf("%-10s | %-14s | %-50s | %-10s | %-16s\n", "Periodo", "Clasificador", "Nivel General Aperuras", "Tipo_variable", "Valor");
     printf("----------------------------------------------------------------------------------------------------------------\n");
 
     vectorRecorrer(regs, mostrarRegistroVecFinal, regs);
@@ -38,7 +38,7 @@ void mostrarRegistroVecFinal(void *elem, void *datos)
 {
     RegistroICC *registro = elem;
 
-    printf("%-10s | %-14s | %-50s | %-14s | %-16f\n",
+    printf("%-10s | %-14s | %-50s | %-14s | %-10s\n",
            registro->periodo,
            registro->clasificador,
            registro->nivelGeneralAperturas,
