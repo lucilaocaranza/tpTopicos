@@ -3,6 +3,7 @@ int compararPorFechayClasificador(const void *a, const void *b)
 {
     const Fila *filaA = a;
     const Fila *filaB = b;
+    char clasifA, clasifB;
 
     int cmp = FechaComparar(&filaA->periodo, &filaB->periodo);
     if (cmp != 0)
@@ -10,8 +11,8 @@ int compararPorFechayClasificador(const void *a, const void *b)
         return cmp;
     }
 
-    char clasifA = *filaA->clasificador;
-    char clasifB = *filaB->clasificador;
+    clasifA = *filaA->clasificador;
+    clasifB = *filaB->clasificador;
 
     if (clasifA != clasifB)
     {
@@ -33,23 +34,26 @@ int compararPorFechayClasificador(const void *a, const void *b)
 
 int compararRegistros(const void *a, const void *b)
 {
+    Fecha fechaA, fechaB;
+    char clasiA, clasifB;
+    const char *tipoA, *tipoB;
+    int cmp;
+
     const RegistroICC *regA = a;
     const RegistroICC *regB = b;
-
-    Fecha fechaA, fechaB;
 
     fechaDeCadena(&fechaA, regA->periodo);
     fechaDeCadena(&fechaB, regB->periodo);
 
     // Comparar por periodo
-    int cmp = FechaComparar(&fechaA, &fechaB);
+    cmp = FechaComparar(&fechaA, &fechaB);
     if (cmp)
         return cmp;
 
     // Si son iguales, comparar por clasificador
 
-    char clasifA = *regA->clasificador;
-    char clasifB = *regB->clasificador;
+    clasifA = *regA->clasificador;
+    clasifB = *regB->clasificador;
 
     // Si difiere en clasificacion, retornar aca
     if (clasifA != clasifB)
@@ -70,8 +74,8 @@ int compararRegistros(const void *a, const void *b)
     // IS la clasificacion es igual, comparar por tipo_variable
     // Ordenar por tipo_var
 
-    const char *tipoA = regA->tipoVariable;
-    const char *tipoB = regB->tipoVariable;
+    tipoA = regA->tipoVariable;
+    tipoB = regB->tipoVariable;
 
     if (strcmp(tipoA, tipoB) == 0) // Son iguales
         return 0;

@@ -2,16 +2,16 @@
 
 void decodificar(char *cadena)
 {
+    int pos = 0, desp;
+    char c, base;
 
-    int pos = 0;
     while (*cadena != 0)
     {
-        char c = *cadena;
-        char base;
+        c = *cadena;
         if ((c >= 'A' && c <= 'Z') || (c >= 'a' && c <= 'z'))
         {
             base = (c >= 'a') ? 'a' : 'A';
-            int desp = (pos % 2 == 0) ? 4 : 2;
+            desp = (pos % 2 == 0) ? 4 : 2;
 
             *cadena = base + ((c - base + desp) % 26);
         }

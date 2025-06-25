@@ -12,7 +12,7 @@ void mostrarVector(Vector *registros)
 void mostrarVectorFinal(Vector *regs)
 {
     printf("== Mostrar vector Final ==\n\n");
-    printf("%-12s | %-16s | %-14s | %-60s | %-16s\n", "Periodo", "Clasificador", "Tipo_variable", "Nivel General Aperuras", "Valor");
+    printf("%-12s | %-16s | %-60s | %-14s | %-16s\n", "Periodo", "Clasificador", "Nivel General Aperuras", "Tipo_variable", "Valor");
     printf("------------------------------------------------------------------------------------------------------------------------------------------------------\n");
 
     vectorRecorrer(regs, mostrarRegistroVectorFinal, regs);
@@ -21,19 +21,19 @@ void mostrarRegistroVectorFinal(void *elem, void *datos)
 {
     RegistroICC *registro = elem;
 
-    printf("%-12s | %-16s | %-14s | %-60s | %-16f\n",
+    printf("%-12s | %-16s | %-60s | %-14s | %-16f\n",
            registro->periodo,
            registro->clasificador,
-           registro->tipoVariable,
            registro->nivelGeneralAperturas,
+           registro->tipoVariable,
            registro->valor);
 }
 
 void mostrarRegistroVector(void *elem, void *datos)
 {
     Fila *registro = elem;
-
     char periodo[11];
+
     FechaConvertirAGuiones(periodo, &registro->periodo);
 
     printf("%-12s | %-60s | %-16f | %-15s | %-16f | %-16f\n",
